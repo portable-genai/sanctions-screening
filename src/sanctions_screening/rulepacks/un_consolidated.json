@@ -1,0 +1,23 @@
+{
+  "list_id": "UN",
+  "program": "UN Security Council Consolidated (FICTIONAL SAMPLE)",
+  "entries": [
+    {
+      "entry_id": "UN-1001",
+      "name": "Volkov Metals OJSC (FICTIONAL)",
+      "kind": "entity",
+      "aliases": ["Volkov Metallurgical (FICTIONAL)", "OJSC Volkov Metals"],
+      "identifiers": ["REG-FIC-88213"],
+      "program": "Asset freeze (fictional)"
+    },
+    {
+      "entry_id": "UN-1002",
+      "name": "Dmitri Volkov (FICTIONAL)",
+      "kind": "individual",
+      "aliases": ["Dmitriy Volkov (FICTIONAL)", "D. Volkov"],
+      "dob": "1968-04-11",
+      "identifiers": ["PASS-FIC-DV1968"],
+      "program": "Travel ban and asset freeze (fictional)"
+    }
+  ]
+}

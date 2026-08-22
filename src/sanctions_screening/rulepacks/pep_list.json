@@ -1,0 +1,23 @@
+{
+  "list_id": "PEP",
+  "program": "Politically Exposed Persons register (FICTIONAL SAMPLE)",
+  "entries": [
+    {
+      "entry_id": "PEP-5001",
+      "name": "Ines Quiller (FICTIONAL)",
+      "kind": "individual",
+      "aliases": ["Ines M. Quiller (FICTIONAL)"],
+      "dob": "1970-02-14",
+      "identifiers": [],
+      "program": "Senior political figure (fictional)"
+    },
+    {
+      "entry_id": "PEP-5002",
+      "name": "Rafael Osei (FICTIONAL)",
+      "kind": "individual",
+      "aliases": ["R. Osei (FICTIONAL)"],
+      "dob": "1962-11-03",
+      "program": "State-owned enterprise director (fictional)"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "list_id": "AU-DFAT",
+  "program": "Australia DFAT Consolidated List (FICTIONAL SAMPLE)",
+  "entries": [
+    {
+      "entry_id": "DFAT-4001",
+      "name": "Coralline Trading Pty Ltd (FICTIONAL)",
+      "kind": "entity",
+      "aliases": ["Coralline Trading (FICTIONAL)"],
+      "identifiers": ["ABN-FIC-40014001"],
+      "program": "Autonomous sanctions (fictional)"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.terraform/
+node_modules/
+
+# Local editor and OS noise.
+.DS_Store
+
+# Local secrets and configuration. The .example files are the committed contract.
+.env
+.env.*
+!.env.example
+!.env.secrets.example

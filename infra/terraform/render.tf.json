@@ -1,0 +1,8 @@
+{
+  "locals": {
+    "render_region": "asia-southeast1",
+    "render_package_name": "sanctions_screening",
+    "render_env_prefix": "SANCTIONS",
+    "render_catalog_id": "G2"
+  }
+}

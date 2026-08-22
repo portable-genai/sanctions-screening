@@ -1,0 +1,23 @@
+{
+  "list_id": "OFAC",
+  "program": "OFAC Specially Designated Nationals (FICTIONAL SAMPLE)",
+  "entries": [
+    {
+      "entry_id": "SDN-2001",
+      "name": "Redsea Shipping Ltd (FICTIONAL)",
+      "kind": "entity",
+      "aliases": ["Red Sea Shipping Limited (FICTIONAL)", "Redsea Shpg Ltd"],
+      "identifiers": ["IMO-FIC-7300001"],
+      "program": "Blocked property (fictional)"
+    },
+    {
+      "entry_id": "SDN-2002",
+      "name": "Marisol Quintana (FICTIONAL)",
+      "kind": "individual",
+      "aliases": ["Mari Quintana (FICTIONAL)"],
+      "dob": "1975-09-30",
+      "identifiers": ["NID-FIC-MQ7530"],
+      "program": "Narcotics designation (fictional)"
+    }
+  ]
+}

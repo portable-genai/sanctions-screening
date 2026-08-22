@@ -1,0 +1,14 @@
+{
+  "list_id": "EU",
+  "program": "EU Consolidated Financial Sanctions (FICTIONAL SAMPLE)",
+  "entries": [
+    {
+      "entry_id": "EU-3001",
+      "name": "Palewater Holdings SA (FICTIONAL)",
+      "kind": "entity",
+      "aliases": ["Palewater SA (FICTIONAL)"],
+      "identifiers": ["REG-FIC-EU3001"],
+      "program": "Restrictive measures (fictional)"
+    }
+  ]
+}

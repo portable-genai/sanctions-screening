@@ -1,0 +1,20 @@
+{
+  "list_id": "GUIDANCE",
+  "guidance": [
+    {
+      "jurisdiction": "SG",
+      "authority": "MAS",
+      "text": "A financial institution must screen all parties to a payment against the lists it is subject to, escalate a possible match to a compliance officer, and never clear a match without a documented human decision (fictional procedure summary)."
+    },
+    {
+      "jurisdiction": "JP",
+      "authority": "JFSA",
+      "text": "Where a name match is identified, the institution retains the underlying evidence, records the disposition rationale, and applies dual review to a confirmed designation (fictional procedure summary)."
+    },
+    {
+      "jurisdiction": "AU",
+      "authority": "AUSTRAC",
+      "text": "A reporting entity assesses the match against beneficial-ownership information and documents whether the party is the true designated person before proceeding (fictional procedure summary)."
+    }
+  ]
+}

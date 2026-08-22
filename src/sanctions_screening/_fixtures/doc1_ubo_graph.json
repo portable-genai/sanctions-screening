@@ -1,0 +1,124 @@
+{
+  "subject_id": "acme",
+  "subject_name": "Acme Holdings Pte Ltd (FICTIONAL)",
+  "tenant": "demo-bank",
+  "as_of": "2026-08-07",
+  "graph": {
+    "root_id": "acme-holdings-pte-ltd-fictional@sg",
+    "root_name": "Acme Holdings Pte Ltd (FICTIONAL)",
+    "nodes": [
+      {
+        "id": "acme-holdings-pte-ltd-fictional@sg",
+        "name": "Acme Holdings Pte Ltd (FICTIONAL)",
+        "kind": "entity",
+        "jurisdiction": "SG",
+        "registered_address": "",
+        "incorporation_date": "",
+        "status": "active",
+        "is_pep": false,
+        "depth": 0,
+        "citations": []
+      },
+      {
+        "id": "palewater-midco-ltd-fictional@ky",
+        "name": "Palewater Midco Ltd (FICTIONAL)",
+        "kind": "entity",
+        "jurisdiction": "KY",
+        "registered_address": "",
+        "incorporation_date": "",
+        "status": "active",
+        "is_pep": false,
+        "depth": 1,
+        "citations": []
+      },
+      {
+        "id": "ines-quiller-fictional@je",
+        "name": "Ines Quiller (FICTIONAL)",
+        "kind": "natural_person",
+        "jurisdiction": "JE",
+        "is_pep": true,
+        "depth": 2,
+        "citations": []
+      },
+      {
+        "id": "ravi-menon-smith-fictional@sg",
+        "name": "Ravi Menon-Smith (FICTIONAL)",
+        "kind": "natural_person",
+        "jurisdiction": "SG",
+        "is_pep": false,
+        "depth": 1,
+        "citations": []
+      }
+    ],
+    "edges": [
+      {
+        "source_id": "palewater-midco-ltd-fictional@ky",
+        "target_id": "acme-holdings-pte-ltd-fictional@sg",
+        "kind": "shareholding",
+        "pct": 60.0,
+        "as_of": "2026-01-31",
+        "citations": []
+      },
+      {
+        "source_id": "ines-quiller-fictional@je",
+        "target_id": "palewater-midco-ltd-fictional@ky",
+        "kind": "shareholding",
+        "pct": 75.0,
+        "as_of": "2026-01-31",
+        "citations": []
+      },
+      {
+        "source_id": "ravi-menon-smith-fictional@sg",
+        "target_id": "acme-holdings-pte-ltd-fictional@sg",
+        "kind": "shareholding",
+        "pct": 30.0,
+        "as_of": "2026-01-31",
+        "citations": []
+      }
+    ],
+    "depth": 2,
+    "truncated": false,
+    "unresolved_ids": [],
+    "jurisdictions": ["JE", "KY", "SG"],
+    "as_of": "2026-08-07"
+  },
+  "findings": [],
+  "beneficial_owners": [
+    {
+      "node_id": "ines-quiller-fictional@je",
+      "name": "Ines Quiller (FICTIONAL)",
+      "kind": "natural_person",
+      "jurisdiction": "JE",
+      "is_pep": true,
+      "effective_pct": 45.0,
+      "paths": [],
+      "control_basis": "none",
+      "control_reason": "",
+      "meets_threshold": true,
+      "citations": []
+    },
+    {
+      "node_id": "ravi-menon-smith-fictional@sg",
+      "name": "Ravi Menon-Smith (FICTIONAL)",
+      "kind": "natural_person",
+      "jurisdiction": "SG",
+      "is_pep": false,
+      "effective_pct": 30.0,
+      "paths": [],
+      "control_basis": "none",
+      "control_reason": "",
+      "meets_threshold": true,
+      "citations": []
+    }
+  ],
+  "control_basis": "effective_ownership",
+  "control_rationale": "Control established on the effective-ownership rung (FICTIONAL).",
+  "flags": [],
+  "opacity_score": 0.5,
+  "ownership_threshold_pct": 25.0,
+  "rationale": "UBO resolution for Acme Holdings Pte Ltd (FICTIONAL). Requires human review.",
+  "narrative": "",
+  "requires_human_review": true,
+  "routed_to_hrz7": true,
+  "generated_at": "2026-08-07T00:00:00+00:00"
+}
