@@ -1,0 +1,16 @@
+{
+  "name": "sanctions-screening",
+  "version": "0.1.0",
+  "description": "Sanctions Screening Copilot (G2). Deterministic decision, cited output, redact-before-audit, and every consequential result routed to a human reviewer.",
+  "repository": "https://github.com/portable-genai/sanctions-screening",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "portable-genai"
+  },
+  "keywords": [
+    "screen-name",
+    "screen-payment-message",
+    "list-disposition-queue",
+    "verify-audit-trail"
+  ]
+}

@@ -24,6 +24,7 @@ commands work; without an install, prefix with `PYTHONPATH=src`.
 | `drop_ui.py` | Removes `ui/` together with its npm dependabot ecosystem and its CI job, in one consistent step (`make drop-ui`). Most catalog repos have no user-facing surface; removing the UI must be cheaper than hand-building one. |
 | `lock.py` | Compiles both lockfiles and puts the header back, because `uv pip compile` REPLACES the output file: it writes its own two-line provenance comment and destroys the `tag = commit` map the pin tests check against. `make lock` runs this rather than uv directly. |
 | `rename_fork.py` | The mechanical half of adopting this repo as a base: rewrites the package name (which is also the console-script name), the `SANCTIONS_` environment prefix, the distribution and resource id, and the Terraform `name_prefix` default, in one pass. It prints a plan and writes nothing without `--yes`. The decisions it cannot make for you are the checklist in `docs/ADOPTING.md`. |
+| `render_plugin.py` | Renders the Agent Plugins 1.0.0 directory (`make plugin`) from what this repo ALREADY declares: identity from the A2A agent card, keywords from the card's skills, and `skills/` from `.agents/skills`. Nothing is hand-authored, because a hand-written manifest is a second description of the service and a second description is one that can be wrong. This tree declares no governed tool catalog, so it packages no MCP server: both are DETECTED rather than assumed. Output is build output and is not committed. |
 
 ## The three ways to run the demo
 
