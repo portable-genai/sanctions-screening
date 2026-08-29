@@ -98,8 +98,8 @@ No literal secret material. `config/settings.yaml` holds environment variable NA
 non-secret defaults only, with `${VAR:-default}` interpolation resolved in three states;
 `.env.example` documents the non-secret variables and `.env.secrets.example` documents the secret
 NAMES with placeholders. The inbound and outbound credentials are deliberately distinct
-variables: `SANCTIONS_S2S_TOKEN` authenticates callers INTO this service, while `HRZ7_S2S_TOKEN`
-and `HRZ7_S2S_SIGNING_KEY` authenticate this service to the review console. Terraform mounts
+variables: `SANCTIONS_S2S_TOKEN` authenticates callers INTO this service, while `HUMAN_REVIEW_S2S_TOKEN`
+and `HUMAN_REVIEW_S2S_SIGNING_KEY` authenticate this service to the review console. Terraform mounts
 secrets by immutable Secret Manager version and refuses `"latest"`, and it refuses a secret whose
 environment variable name would shadow one the stack sets itself.
 
