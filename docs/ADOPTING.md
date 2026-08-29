@@ -206,8 +206,8 @@ is authoritative in [`COMPLIANCE.md`](../COMPLIANCE.md).
   production.
 - **Hrz7** (the human-review and maker-checker console) owns review workflow and approvals. Wired
   today, and it is the reason `ReviewRouterPort` exists: rule R8 means an escalation is ROUTED,
-  never merely flagged. Set `HRZ_HUMAN_REVIEW_URL`, supply the outbound `HRZ7_S2S_TOKEN` and
-  `HRZ7_S2S_SIGNING_KEY`, and do not re-implement the console. The managed router refuses rather
+  never merely flagged. Set `HUMAN_REVIEW_URL`, supply the outbound `HUMAN_REVIEW_S2S_TOKEN` and
+  `HUMAN_REVIEW_S2S_SIGNING_KEY`, and do not re-implement the console. The managed router refuses rather
   than swallowing an escalation when no console is configured.
 - **Hrz4** (the AI-quality and model-risk gate) owns the promotion verdict. Half-wired: the client
   is here and registers the bundle `sanctions-screening`; you register that bundle,
@@ -243,6 +243,6 @@ approve, block a payment, file a report, freeze an account, or maintain the list
 - [ ] Retuned `JURISDICTIONS` in `domain/pii.py` and `_FIELD_MAP` in `domain/message_fields.py` for your markets and message flavours.
 - [ ] Replaced every synthetic fixture (`_fixtures/doc1_ubo_graph.json`, the adverse-media corpus, `tests/fixtures/sample_cases.py`).
 - [ ] Rebuilt `eval/datasets/golden_cases.jsonl` and the `THRESHOLDS` for your list set, keeping a provable-red case per metric.
-- [ ] Wired `HRZ_HUMAN_REVIEW_URL` and `DOC1_A2A_URL`, and decided which other sibling systems you integrate vs stub.
+- [ ] Wired `HUMAN_REVIEW_URL` and `DOC1_A2A_URL`, and decided which other sibling systems you integrate vs stub.
 - [ ] Reviewed the deploy posture (Dockerfile, `infra/terraform/`, bind address) and read `managed_readiness.py` before enabling the managed profile.
 - [ ] Recorded your baseline upstream tag so you can take future fixes.
