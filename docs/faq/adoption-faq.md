@@ -97,7 +97,7 @@ It is guarded, and the guard is inside the gate. A demo step exists in exactly t
 `demo.STEPS` and `walkthrough.CHECKS`, and `tests/unit/test_demo_surface.py` holds the two equal,
 so a narrated claim nobody verifies cannot exist. `make demo-selftest` runs the whole arc headless
 and unattended, asserting at each step that the service actually reached the state the narration
-claimed, and the hosted Cloud Build check runs it along with `make portability`,
+claimed, and the hosted GitHub Actions check runs it along with `make portability`,
 `make demo-static` and `make docs-check` on every push. When you add a step, put the numbers the
 check reads in the step's `facts` dict rather than only in the rendered rows: a check that parses
 prose breaks on a wording change.
