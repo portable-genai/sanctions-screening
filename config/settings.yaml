@@ -45,7 +45,7 @@ iap_audience: ${SANCTIONS_IAP_AUDIENCE:-}
 # deliberately distinct from this service's own inbound SANCTIONS_S2S_TOKEN.
 review_url: ${HUMAN_REVIEW_URL:-}
 
-# Doc1's A2A base URL, which the managed ownership adapter resolves UBO graphs from. Empty (the
+# cdd-sow-research's A2A base URL, which the managed ownership adapter resolves UBO graphs from. Empty (the
 # default) means unconfigured, and the managed adapter refuses rather than inventing an empty
 # graph. The offline profile replays a captured fixture and never reads this.
 doc1_a2a_url: ${DOC1_A2A_URL:-}
@@ -81,7 +81,7 @@ adapters:
     onprem: sanctions_screening.adapters.onprem.review_router:OnPremReviewRouter
 
   # Tracing. Which BACKEND a deployed profile exports to is not a binding: the gcp
-  # adapter reads OTEL_EXPORTER_OTLP_ENDPOINT and sends OTLP to the Hrz5 collector when it
+  # adapter reads OTEL_EXPORTER_OTLP_ENDPOINT and sends OTLP to the agent-observability collector when it
   # is set, straight to Cloud Trace when it is not. Tracing is not essential to
   # correctness, so onprem is ABSENT rather than fatal, unlike the other placeholders.
   tracer:
@@ -89,7 +89,7 @@ adapters:
     gcp: sanctions_screening.adapters.gcp.tracer:CloudTracerAdapter
     onprem: sanctions_screening.adapters.onprem.tracer:OnPremTracerAdapter
 
-  # The promotion authority (Hrz4). The local adapter scores offline but REFUSES to
+  # The promotion authority (model-quality-gate). The local adapter scores offline but REFUSES to
   # promote: a promotion certified by a laptop with no quality service is certified by
   # nothing.
   evaluation:

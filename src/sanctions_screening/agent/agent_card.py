@@ -1,9 +1,9 @@
 """The A2A discovery card: what this agent can be asked to do, in one machine-readable place.
 
-Served at ``/.well-known/agent-card.json`` and registrable with Hrz3 (rule R4). The card is
-built from the SAME tool table the runtime binds, so an agent cannot advertise a skill it does
-not implement or implement one it never advertises; ``tests/unit/test_agent_surface.py`` fails
-the build when the two disagree.
+Served at ``/.well-known/agent-card.json`` and registrable with agent-registry (rule R4). The card
+is built from the SAME tool table the runtime binds, so an agent cannot advertise a skill it does
+not implement or implement one it never advertises; ``tests/unit/test_agent_surface.py`` fails the
+build when the two disagree.
 
 Pure: domain types and stdlib only, no ADK and no cloud SDK, so the card can be generated and
 inspected offline.
@@ -49,7 +49,8 @@ SKILLS: tuple[AgentSkill, ...] = (
         description=(
             "Screen one party name against the sanctions and PEP list packs with the "
             "deterministic fuzzy-match engine, screen the subject's beneficial owners from "
-            "Doc1, draft a grounded disposition memo, and ROUTE the disposition to human review "
+            "cdd-sow-research, draft a grounded disposition memo, and ROUTE the disposition to "
+            "human review "
             "(rule R8). The confidence band is computed by pure stdlib code, never by a model."
         ),
     ),

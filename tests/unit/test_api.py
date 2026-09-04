@@ -37,10 +37,12 @@ def test_an_ownership_graph_of_another_tenant_is_not_resolvable(
 ) -> None:
     """Object-level authorization: naming a UBO graph key is not entitlement to the graph.
 
-    The verified principal `other-tenant` belongs to `other-bank`, and the fixture Doc1 graph is
+    The verified principal `other-tenant` belongs to `other-bank`, and the fixture cdd-sow-research
+    graph is
     tagged `demo-bank`. `OwnershipGraphPort.resolve` took a client-supplied `subject_id` and no
     principal, so any authenticated caller who named a key had that subject's beneficial owners,
-    who are NATURAL PERSONS, resolved and screened on their behalf. Doc1 publishes the owning
+    who are NATURAL PERSONS, resolved and screened on their behalf. cdd-sow-research publishes the
+    owning
     tenant on the contract; this consumer was dropping it.
 
     The screen still succeeds and still bands the name: refusing the ownership enrichment is not

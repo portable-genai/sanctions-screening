@@ -10,7 +10,7 @@ status column), [`../runbook.md`](../runbook.md), [`../practices-audit.md`](../p
 
 A subject name plus the attributes that sharpen a match (kind, date of birth, identifiers,
 jurisdiction), optionally a parsed payment message as ordered field pairs, optionally a subject
-key for Doc1's ownership graph, and a free-text context an analyst may attach. It produces a
+key for `cdd-sow-research`'s ownership graph, and a free-text context an analyst may attach. It produces a
 `ScreeningResult`: banded matches against the list packs, the beneficial owners screened, an
 advisory adverse-media set, a disposition memo and the review reference the escalation was routed
 to. Counterparty names and identifiers ARE personal data, so unlike a purely aggregate service
@@ -83,7 +83,7 @@ At every boundary, not once. The screening service redacts the audit summary wit
 `pii-kit` before the WORM write (`domain/screening_service.py`, using the row selection and
 ORDER in `domain/pii.py`); `adapters/_review_payload.py` redacts subject, summary and every
 citation snippet before the payload leaves the process, against EVERY jurisdiction's rows rather
-than only this deployment's, because the Hrz7 console is a shared sink; and `agent/tools.py`
+than only this deployment's, because the `human-review-console` is a shared sink; and `agent/tools.py`
 masks every string in a tool result, however deeply nested, because a tool result becomes a
 model's context. `tests/unit/test_screening_service.py::test_pii_is_redacted_before_the_audit_write`
 and `tests/unit/test_review_routing.py::test_the_payload_is_redacted_before_it_leaves_the_process`
@@ -127,7 +127,7 @@ reorder; only the anchor catches a TRUNCATED TAIL, because a truncated chain sti
 perfectly. Once the store and the anchor disagree the service refuses to append rather than
 re-anchoring, so an ordinary write cannot launder a divergence.
 `tests/unit/test_audit_anchor.py` proves both halves plus the control case where the same
-truncation goes undetected without an anchor. In production the enterprise WORM store is Hrz5's
+truncation goes undetected without an anchor. In production the enterprise WORM store is `agent-observability`'s
 job and the managed adapter writes to a locked Cloud Logging bucket
 (`infra/terraform/logging_worm.tf`, retention floor 180 days, lock irreversible).
 
@@ -145,12 +145,12 @@ detail is in the "Browser boundary" row of [`../../COMPLIANCE.md`](../../COMPLIA
 
 ## What is explicitly out of scope for this repo?
 
-Prompt-injection screening and output filtering (**Hrz1**, the guardrail gateway: not wired today,
+Prompt-injection screening and output filtering (`agent-guardrail-gateway`, the guardrail gateway: not wired today,
 and honestly so, because no model call currently executes on any profile), governed ACL-aware
-retrieval (**Hrz2**), the agent registry that owns agent identity and entitlements (**Hrz3**), the
-promotion and model-risk gate (**Hrz4**), the enterprise WORM audit and tracing sink (**Hrz5**),
-the human-review and maker-checker console (**Hrz7**), and beneficial-ownership RESOLUTION
-(**Doc1**, whose frozen graph contract this repo consumes rather than reimplements). This repo
+retrieval (`enterprise-knowledge-base`), the agent registry that owns agent identity and entitlements (`agent-registry`), the
+promotion and model-risk gate (`model-quality-gate`), the enterprise WORM audit and tracing sink (`agent-observability`),
+the human-review and maker-checker console (`human-review-console`), and beneficial-ownership RESOLUTION
+(`cdd-sow-research`, whose frozen graph contract this repo consumes rather than reimplements). This repo
 integrates those through ports rather than re-implementing them; see
 [features-faq.md](features-faq.md) for the full map and
 [`../../COMPLIANCE.md`](../../COMPLIANCE.md) for which integrations are wired today.

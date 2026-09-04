@@ -282,7 +282,8 @@ def screen(
     """Screen a subject; the audit actor is the verified principal, never the request body.
 
     Rule R8: a screening disposition ALWAYS sets ``requires_human_review`` (the system never
-    clears a match on its own), and it is ROUTED to the Hrz7 console here, in the same request
+    clears a match on its own), and it is ROUTED to the human-review-console here, in the same
+    request
     that produced it. The maker is the verified principal, so the console records who originated
     the decision.
     """

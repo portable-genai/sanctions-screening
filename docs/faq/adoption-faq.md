@@ -18,7 +18,7 @@ Two flags you may expect are deliberately absent. There is no `--cli`: the `[pro
 entry point is named after the package, so `--package` renames the console script too and a
 second flag could only drift out of step. There is no `--dist`: `--resource` is one literal doing
 four jobs (the distribution name, the GitHub id in `[project.urls]`, the A2A agent-card name in
-`agent/agent_card.py` and the Hrz4 eval bundle `_BUNDLE` in `eval/run_eval.py`), so a fork's
+`agent/agent_card.py` and the `model-quality-gate` eval bundle `_BUNDLE` in `eval/run_eval.py`), so a fork's
 promotion record and its discovery card cannot disagree about which system they describe.
 `--name-prefix` is scoped to the `variable "name_prefix"` block in
 `infra/terraform/variables.tf`, and reads the current value from there rather than hardcoding
@@ -122,10 +122,10 @@ a crafted bad case is not a metric.
 ## What does adoption NOT get me, and who owns those pieces?
 
 Forking this repo gets you the screening engine and the hexagon. It does not get you a review
-console (**Hrz7**, which you point at and do not rebuild), a promotion authority (**Hrz4**, where
-you register the eval bundle), an enterprise WORM audit and tracing sink (**Hrz5**), an agent
-registry (**Hrz3**), a guardrail gateway (**Hrz1**), a governed knowledge base (**Hrz2**), or
-beneficial-ownership resolution (**Doc1**, whose frozen graph contract this repo consumes). It
+console (`human-review-console`, which you point at and do not rebuild), a promotion authority (`model-quality-gate`, where
+you register the eval bundle), an enterprise WORM audit and tracing sink (`agent-observability`), an agent
+registry (`agent-registry`), a guardrail gateway (`agent-guardrail-gateway`), a governed knowledge base (`enterprise-knowledge-base`), or
+beneficial-ownership resolution (`cdd-sow-research`, whose frozen graph contract this repo consumes). It
 also does not get you list data: the packs in `rulepacks/` are fictional stand-ins and your
 provider's feed, refresh cadence and currency SLA are yours. See
 [features-faq.md](features-faq.md) for the full boundary map and

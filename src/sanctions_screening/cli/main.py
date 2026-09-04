@@ -19,9 +19,13 @@ def main(argv: list[str] | None = None) -> int:
     screen_cmd = sub.add_parser("screen", help="Screen a single party name.")
     screen_cmd.add_argument("subject")
     screen_cmd.add_argument("--kind", default=PartyKind.ENTITY.value)
-    screen_cmd.add_argument("--subject-id", default="", help="Doc1 UBO key; empty skips owners.")
+    screen_cmd.add_argument(
+        "--subject-id", default="", help="cdd-sow-research UBO key; empty skips owners."
+    )
     screen_cmd.add_argument("--actor", default="cli-user@bank.example")
-    screen_cmd.add_argument("--tenant", default="", help="Tenant partition asserted to Hrz7.")
+    screen_cmd.add_argument(
+        "--tenant", default="", help="Tenant partition asserted to human-review-console."
+    )
 
     args = parser.parse_args(argv)
     container = build_container()

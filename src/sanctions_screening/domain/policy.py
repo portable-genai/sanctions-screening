@@ -30,7 +30,8 @@ class MatchPolicy:
     name_part_weight: float = 0.25
     dob_weight: float = 0.12
     id_weight: float = 0.08
-    #: The ownership stake at or above which a natural person is a beneficial owner. Doc1 owns the
+    #: The ownership stake at or above which a natural person is a beneficial owner.
+    #: cdd-sow-research owns the
     #: resolution; this is the threshold THIS screening applies when reading the graph.
     ownership_threshold_pct: float = 25.0
 

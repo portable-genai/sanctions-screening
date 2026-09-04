@@ -145,7 +145,9 @@ class PartyScreening:
 
 @dataclass(frozen=True, slots=True)
 class OwnershipNode:
-    """A node in the beneficial-ownership graph consumed from Doc1 (subset of its contract)."""
+    """A node in the beneficial-ownership graph consumed from cdd-sow-research (subset of its
+    contract).
+    """
 
     node_id: str
     name: str
@@ -157,7 +159,9 @@ class OwnershipNode:
 
 @dataclass(frozen=True, slots=True)
 class OwnershipEdge:
-    """An ownership or control edge. ``pct`` is 0..100, never a 0..1 fraction (Doc1 contract)."""
+    """An ownership or control edge. ``pct`` is 0..100, never a 0..1 fraction (cdd-sow-research
+    contract).
+    """
 
     source_id: str
     target_id: str
@@ -167,7 +171,7 @@ class OwnershipEdge:
 
 @dataclass(frozen=True, slots=True)
 class BeneficialOwner:
-    """A natural person at or above the ownership threshold, per Doc1's resolution."""
+    """A natural person at or above the ownership threshold, per cdd-sow-research's resolution."""
 
     node_id: str
     name: str
@@ -180,7 +184,7 @@ class BeneficialOwner:
 
 @dataclass(frozen=True, slots=True)
 class OwnershipGraph:
-    """The resolved ownership graph for a subject, read from Doc1's frozen A2A contract.
+    """The resolved ownership graph for a subject, read from cdd-sow-research's frozen A2A contract.
 
     ``truncated`` or a non-empty ``unresolved_ids`` means the percentages are a FLOOR: the
     structure is partial, and a consumer that presents it as complete is misreporting it.
@@ -189,7 +193,8 @@ class OwnershipGraph:
     subject_id: str
     subject_name: str
     root_id: str
-    #: The tenant that OWNS this graph, as published on Doc1's contract. It is the data tag
+    #: The tenant that OWNS this graph, as published on cdd-sow-research's contract. It is the data
+    #: tag
     #: object-level authorization is derived from: a UBO graph key is a name, not an
     #: entitlement, and the beneficial owners behind it are natural persons. Empty means the
     #: source did not say, so no principal may read it.
@@ -233,7 +238,7 @@ class ScreeningRequest:
     dob: str = ""
     identifiers: tuple[str, ...] = ()
     jurisdiction: str = ""
-    #: The subject's UBO graph key at Doc1. Empty means "do not resolve ownership".
+    #: The subject's UBO graph key at cdd-sow-research. Empty means "do not resolve ownership".
     subject_id: str = ""
     #: A parsed payment message as ordered field pairs (ISO 20022 / SWIFT). Empty means the
     #: subject name is screened on its own.

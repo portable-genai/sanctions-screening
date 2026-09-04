@@ -1,15 +1,15 @@
-"""Parse Doc1's FROZEN UBO-graph JSON body into this vertical's ``OwnershipGraph``.
+"""Parse cdd-sow-research's FROZEN UBO-graph JSON body into this vertical's ``OwnershipGraph``.
 
-Doc1 froze the shape of ``resolve_ubo_graph`` / ``GET /v1/ubo-graph`` in
+cdd-sow-research froze the shape of ``resolve_ubo_graph`` / ``GET /v1/ubo-graph`` in
 ``cdd-sow-research/docs/ubo-graph-contract.md`` and versions it by the agent card. This is the
-CONSUMER side of that agreement: one strict reader, used by BOTH the managed adapter (over the
-wire) and the local adapter (over a captured fixture), so the two families cannot read the same
-contract two different ways. A field Doc1 renames, retypes or removes breaks this reader loudly,
+CONSUMER side of that agreement: one strict reader, used by BOTH the managed adapter (over the wire)
+and the local adapter (over a captured fixture), so the two families cannot read the same contract
+two different ways. A field cdd-sow-research renames, retypes or removes breaks this reader loudly,
 which is exactly the drift a consumer contract-fixture test is meant to catch here rather than in
-production. Unknown ADDED fields are ignored, matching Doc1's additive-change rule.
+production. Unknown ADDED fields are ignored, matching cdd-sow-research's additive-change rule.
 
-The single most likely silent break Doc1 called out is a percentage arriving as a 0..1 fraction
-or a string; :func:`_pct` refuses anything that is not a real number in 0..100.
+The single most likely silent break cdd-sow-research called out is a percentage arriving as a 0..1
+fraction or a string; :func:`_pct` refuses anything that is not a real number in 0..100.
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ from ..domain.models import (
 
 
 class UboContractError(ValueError):
-    """Doc1's UBO body did not match the frozen contract this consumer pins."""
+    """cdd-sow-research's UBO body did not match the frozen contract this consumer pins."""
 
 
 def _require(body: Mapping[str, Any], key: str) -> Any:
@@ -79,7 +79,9 @@ def _owner(raw: Mapping[str, Any]) -> BeneficialOwner:
 
 
 def parse_ubo_graph(body: Mapping[str, Any]) -> OwnershipGraph:
-    """Parse a Doc1 UBO body into an :class:`OwnershipGraph`, raising on any contract drift."""
+    """Parse a cdd-sow-research UBO body into an :class:`OwnershipGraph`, raising on any contract
+    drift.
+    """
     if not isinstance(body, Mapping):
         raise UboContractError("UBO body must be a JSON object")
     graph = _require(body, "graph")
@@ -95,7 +97,8 @@ def parse_ubo_graph(body: Mapping[str, Any]) -> OwnershipGraph:
         subject_id=str(body.get("subject_id", "")),
         subject_name=str(body.get("subject_name", "")),
         root_id=str(graph.get("root_id", "")),
-        # Doc1 has always published the owning tenant on this contract and this consumer was
+        # cdd-sow-research has always published the owning tenant on this contract and this consumer
+        # was
         # dropping it, which is how a UBO graph key from any caller resolved any subject's
         # beneficial owners. Read it, so the adapter has something to authorize against.
         tenant=str(body.get("tenant", "")),

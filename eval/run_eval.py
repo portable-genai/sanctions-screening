@@ -4,11 +4,11 @@
 Two named layers via ``--mode``:
 
 * **smoke** (default) is the offline pre-merge check: it drives the real ``ScreeningService``
-  against a golden set with SDK-free local adapters and scores its metrics against the DATASET'S
-  OWN ``expected`` oracle, never against the pipeline's own verdict. Three metrics are also proven
-  ABLE TO GO RED via ``agent_eval_kit.assert_each_can_go_red``: a metric that cannot fail on a
-  crafted bad case is not a metric.
-* **gate** is the promotion verdict from the shared Hrz4 authority (requires the ``gcp`` profile).
+  against a golden set with SDK-free local adapters and scores its metrics against the DATASET'S OWN
+  ``expected`` oracle, never against the pipeline's own verdict. Three metrics are also proven ABLE
+  TO GO RED via ``agent_eval_kit.assert_each_can_go_red``: a metric that cannot fail on a crafted
+  bad case is not a metric. * **gate** is the promotion verdict from the shared model-quality-gate
+  authority (requires the ``gcp`` profile).
 
 Exit is ``0`` iff every metric meets its threshold (and, in gate mode, the authority agrees).
 """
@@ -55,7 +55,8 @@ THRESHOLDS: dict[str, float] = {
     "memo_groundedness": 1.0,
     "pii_safety": 0.99,
 }
-#: The registered Hrz4 metric bundle for this vertical (Hrz4 owns the metrics + thresholds).
+#: The registered model-quality-gate metric bundle for this vertical (model-quality-gate owns the
+#: metrics + thresholds).
 _BUNDLE = "sanctions-screening"
 
 
@@ -273,6 +274,6 @@ if __name__ == "__main__":
             smoke=run_smoke,
             gate=run_gate,
             default_dataset=DEFAULT_DATASET,
-            description="Offline / Hrz4 evaluation gate for G2.",
+            description="Offline / model-quality-gate for G2.",
         )
     )

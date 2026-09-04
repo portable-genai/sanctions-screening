@@ -16,7 +16,7 @@ produced the result, so the escalation never depends on a later job that may not
 response carries a `review_ref` so a caller can distinguish a routed escalation from one that
 stopped in this process. A confirmed match maps to CRITICAL severity, which the shared review
 payload marks as demanding dual control (two approvals) rather than a single checker. The console
-itself is **Hrz7**; this repo routes to it (dependency rule R8) and does not reimplement it.
+itself is `human-review-console`; this repo routes to it (dependency rule R8) and does not reimplement it.
 `tests/unit/test_review_routing.py` asserts the routing, not the flag, and the on-premises
 placeholder refuses rather than dropping an escalation, because a router that silently returned
 would convert every consequential result into an unreviewed one.
@@ -34,7 +34,7 @@ not once:
   selection and ORDER in `domain/pii.py` (shipped as `SG`, `HK`, `JP`, `AU`, over the shared
   `pii-kit`);
 - before the review payload leaves the process, in `adapters/_review_payload.py`, and there
-  against EVERY jurisdiction's rows rather than only this deployment's, because the Hrz7 console
+  against EVERY jurisdiction's rows rather than only this deployment's, because the `human-review-console`
   is a shared sink and a case filed in one market may quote another market's national id;
 - before any tool result returns, in `agent/tools.py`, because a tool result becomes a model's
   context (principle P-04).
@@ -69,7 +69,7 @@ the band) so a second line can recompute a band rather than trust it.
 The local trail is hash-chained AND externally anchored: the chain catches an edit, a deletion or
 a reorder, while only the anchor catches a truncated tail, because a truncated chain still
 verifies perfectly. Once store and anchor disagree the service refuses to append rather than
-re-anchoring. In production the enterprise WORM store is **Hrz5**'s job, or a locked Cloud
+re-anchoring. In production the enterprise WORM store is `agent-observability`'s job, or a locked Cloud
 Logging bucket (`infra/terraform/logging_worm.tf`, six-month retention floor, lock irreversible).
 
 ## What is the model-risk position?
@@ -86,15 +86,15 @@ deterministic memo and the managed adapter is a construction-only seam. `managed
 names it, and the API preflight REFUSES to start a managed process while it is on the primary
 journey, so "production ready" cannot become a label. [`../model-card.md`](../model-card.md)
 records the boundary and the controls still owed (model id and version pinning, budget and rate
-controls with a kill switch, a managed-profile eval run through the **Hrz4** gate, and
-prompt-injection screening through **Hrz1**).
+controls with a kill switch, a managed-profile eval run through the `model-quality-gate`, and
+prompt-injection screening through `agent-guardrail-gateway`).
 
 The offline eval gate (`eval/run_eval.py --mode smoke`) runs on every merge and scores six
 metrics against a hand-written oracle, never against the pipeline's own verdict:
 `recommendation_accuracy` at 0.80, `no_false_clear` at 1.0, `screening_coverage` at 1.0,
 `pack_schema_validity` at 1.0, `memo_groundedness` at 1.0, and `pii_safety` at 0.99. `--mode gate`
-delegates the promotion verdict to **Hrz4** and refuses to run off the managed profile.
-Registering this repo's bundle and thresholds with Hrz4 is still owed (P-08, rule R5). Note
+delegates the promotion verdict to `model-quality-gate` and refuses to run off the managed profile.
+Registering this repo's bundle and thresholds with `model-quality-gate` is still owed (P-08, rule R5). Note
 honestly that `memo_groundedness` currently measures a memo the engine itself wrote, which is
 grounded by construction, so it is not yet a test of a model.
 
@@ -120,8 +120,8 @@ read the status legend at the top of it: **Covered** means a test fails the buil
 regresses, **Partial** means the in-repo half exists and the named deploy-time or platform half
 does not yet, and **TODO (repo owner)** means NOT covered. The document is deliberately honest on
 day one rather than complete on day one. The recurring theme in the open rows is platform
-binding: the guardrail gateway (Hrz1), the shared observability and audit sink (Hrz5), the agent
-registry (Hrz3) and the Hrz4 bundle registration are named rather than claimed. An adopter is
+binding: the guardrail gateway (`agent-guardrail-gateway`), the shared observability and audit sink (`agent-observability`), the agent
+registry (`agent-registry`) and the `model-quality-gate` bundle registration are named rather than claimed. An adopter is
 expected to record a risk acceptance for every row still Partial or TODO at go-live.
 
 ## Which regulators does this map to?
@@ -140,7 +140,7 @@ alert-to-review SLA and your independent testing are yours.
 
 Not without your own legal, security and model-risk sign-off. Everything shipped is obviously
 fictional: the six list and guidance packs in `src/sanctions_screening/rulepacks/`, the
-captured Doc1 ownership graph, the adverse-media corpus and the golden set, all using fictional
+captured `cdd-sow-research` ownership graph, the adverse-media corpus and the golden set, all using fictional
 parties and `.example` domains. The packs in particular are adopter-owned reference data, not a
 list feed: this repo is not a list vendor, does not refresh lists, and makes no claim about the
 completeness or currency of what it ships. The prerequisites are the adoption checklist in

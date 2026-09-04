@@ -15,7 +15,7 @@ class ScreenRequest(BaseModel):
     dob: str = ""
     identifiers: list[str] = []
     jurisdiction: str = ""
-    #: The subject's UBO graph key at Doc1. Empty means "do not resolve ownership".
+    #: The subject's UBO graph key at cdd-sow-research. Empty means "do not resolve ownership".
     subject_id: str = ""
     #: Payment-message fields (ISO 20022 element names or SWIFT tags) to extract parties from.
     message: dict[str, str] = {}
@@ -69,7 +69,8 @@ class ScreenResponse(BaseModel):
     owners_screened: int
     memo: str
     memo_grounded: bool
-    #: Where the disposition WENT (rule R8): the Hrz7 review id, or the local queue reference.
+    #: Where the disposition WENT (rule R8): the human-review-console review id, or the local queue
+    #: reference.
     #: Never empty, because every disposition routes.
     review_ref: str = ""
     party_screenings: list[PartyScreeningModel] = []

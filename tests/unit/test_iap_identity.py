@@ -414,7 +414,8 @@ _REBOUND_SETTINGS = "\n".join(
         ],
         f"    onprem: {_PKG}.adapters.onprem.evaluation:OnPremEvalAdapter",
         # The screening DATA ports are rebound to their SDK-free local adapters under gcp too, so
-        # the real gcp IDENTITY binding above is exercised over the wire without Doc1's A2A
+        # the real gcp IDENTITY binding above is exercised over the wire without cdd-sow-research's
+        # A2A
         # surface, a grounding backend or a model runtime. Same documented rebinding path.
         "  ownership_graph:",
         *[
