@@ -2,12 +2,13 @@
 
 The consequential decisions (the match confidence, the band, the recommendation, the effective
 ownership percentages) are PURE engine output; the model narrates the memo and produces no number.
-The pipeline, in order: parse the parties, screen each against the list packs, consume Doc1's
-resolved ownership graph and screen each beneficial owner, gather advisory adverse media, band the
-whole subject, draft the memo under groundedness validation, redact, and write the audit record.
+The pipeline, in order: parse the parties, screen each against the list packs, consume
+cdd-sow-research's resolved ownership graph and screen each beneficial owner, gather advisory
+adverse media, band the whole subject, draft the memo under groundedness validation, redact, and
+write the audit record.
 
 Every disposition is consequential: ``requires_human_review`` is ALWAYS True and the caller routes
-the result to Hrz7 (rule R8). The system never clears a match on its own.
+the result to human-review-console (rule R8). The system never clears a match on its own.
 """
 
 from __future__ import annotations
@@ -63,7 +64,8 @@ def _redacted(node: Any) -> Any:
 
     The memo facts are the model's whole input, and they are assembled from two sources that are
     both free text: the SUBJECT the caller typed (a screen of a natural person carries the name
-    and the national id in that field) and the beneficial-owner names Doc1 resolved, who are
+    and the national id in that field) and the beneficial-owner names cdd-sow-research resolved, who
+    are
     natural persons named by another service and never the caller's own text. Walking the whole
     structure rather than the two fields somebody remembers means a third source added later is
     covered the day it is added.
@@ -131,7 +133,8 @@ class ScreeningService:
         """Screen one subject end to end, inside one span.
 
         ``tenant`` is the VERIFIED principal's, never a value from a request body, and it scopes
-        the ONE read this service makes of stored data: Doc1's ownership graph, which the caller
+        the ONE read this service makes of stored data: cdd-sow-research's ownership graph, which
+        the caller
         names by a client-supplied key and whose beneficial owners are natural persons. An empty
         tenant resolves no graph rather than every graph.
 

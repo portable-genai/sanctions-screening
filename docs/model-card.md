@@ -48,7 +48,7 @@ grounded in the engine's own facts and its list-pack citations, not in retrieved
   before the review payload leaves the process (`adapters/_review_payload.py`, against every
   jurisdiction's rows because the console is a shared sink) and before any agent tool result
   returns (`agent/tools.py`). Anyone binding a real model here should decide, in their own DPIA,
-  whether the party name may cross that boundary, and bind the **Hrz1** guardrail port if so.
+  whether the party name may cross that boundary, and bind the `agent-guardrail-gateway` port if so.
 - **Every draft is validated, and a bad one is discarded rather than repaired.**
   `domain/memo.py::is_grounded` compares every numeric token in the draft against
   `allowed_numbers`, the exact set the engine computed or already quoted in its own facts (so a
@@ -81,7 +81,7 @@ model and is likewise construction-only. Both are listed in
 `gcp` process while either is bound on the active path. Terraform's `managed_profile_implemented`
 local should be set only when that tuple is empty.
 
-The eval's promotion client also names `gemini-3.5-flash` when it asks the **Hrz4** gate
+The eval's promotion client also names `gemini-3.5-flash` when it asks the `model-quality-gate`
 (`eval/run_eval.py::run_gate`), so the pinned id is stated in both places a promotion record
 would read it.
 
@@ -95,16 +95,16 @@ would read it.
   rate limit, a timeout and a circuit breaker on the narration call, and a switch that forces
   deterministic-only operation with the model disabled. The fallback path already makes that
   switch cheap: turning the model off degrades the memo prose and moves no figure.
-- **Prompt-injection screening through Hrz1** (rule R1). Untrusted text reaches this service in
+- **Prompt-injection screening through `agent-guardrail-gateway`** (rule R1). Untrusted text reaches this service in
   the subject name, the payment-message fields and the analyst context. Only the first two can
   currently reach a narration prompt, but a guardrail port must be bound at the model boundary
   before one is wired, failing closed to deterministic-only when the screen is unavailable.
-- **A managed-profile eval run through the Hrz4 gate** (P-08, rule R5). The offline eval scores
+- **A managed-profile eval run through the `model-quality-gate`** (P-08, rule R5). The offline eval scores
   the deterministic pipeline: `memo_groundedness` currently measures a memo the engine itself
   wrote, which is grounded by construction and therefore not yet a test of a model. Register the
-  bundle `sanctions-screening` with Hrz4 and add a managed-profile run that scores
+  bundle `sanctions-screening` with `model-quality-gate` and add a managed-profile run that scores
   real draft groundedness against the same golden cases.
-- **Bind the prompt and response record to Hrz5** (rule R2). Today the WORM trail records the
+- **Bind the prompt and response record to `agent-observability`** (rule R2). Today the WORM trail records the
   redacted screening summary and its citations, not the model exchange. A deployed model needs
   its inputs and outputs in the shared observability sink, with the span attributes staying
   structural as they are now.

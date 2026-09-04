@@ -13,9 +13,9 @@ page is written for a specific audience; skim the one that matches your role.
 | [compliance-faq.md](compliance-faq.md) | Compliance / model risk / privacy | maker-checker and rule R8, redact-before-audit, reproducibility, the model-risk position, residency enforcement, what is still Partial, and what this system is not |
 
 These FAQs deliberately do **not** re-document capabilities owned by sibling catalog systems.
-Where a concern belongs to another system (Doc1 for beneficial-ownership resolution, Hrz1 for
-guardrails, Hrz2 for governed retrieval, Hrz3 for the agent registry, Hrz4 for promotion, Hrz5
-for the enterprise WORM sink and tracing, Hrz7 for the review console), the page names the
+Where a concern belongs to another system (`cdd-sow-research` for beneficial-ownership resolution, `agent-guardrail-gateway` for
+guardrails, `enterprise-knowledge-base` for governed retrieval, `agent-registry` for the agent registry, `model-quality-gate` for promotion, `agent-observability`
+for the enterprise WORM sink and tracing, `human-review-console` for the review console), the page names the
 owning catalog id and explains the boundary rather than duplicating it. See
 [features-faq.md](features-faq.md) for the full boundary map, and
 [`../../COMPLIANCE.md`](../../COMPLIANCE.md) for the authoritative status of each integration.

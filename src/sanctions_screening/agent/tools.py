@@ -74,13 +74,14 @@ def screen_name(
     """Screen one party name against the sanctions and PEP lists and route the disposition.
 
     Scores the name against every list entry with the deterministic match engine, optionally
-    resolves and screens the subject's beneficial owners from Doc1, drafts a grounded disposition
+    resolves and screens the subject's beneficial owners from cdd-sow-research, drafts a grounded
+    disposition
     memo, and routes the disposition to human review (rule R8).
 
     Args:
       subject: The party name to screen.
       kind: ``individual``, ``entity``, ``vessel`` or ``unknown``.
-      subject_id: The subject's UBO graph key at Doc1; empty skips ownership resolution.
+      subject_id: The subject's UBO graph key at cdd-sow-research; empty skips ownership resolution.
       actor: The verified identity this call is attributed to.
       tenant: Tenant partition asserted on the outbound review.
 
@@ -120,7 +121,8 @@ def list_disposition_queue(settings: Settings | None = None) -> dict[str, Any]:
 
     Returns:
       A dict with the pending count and, for each item, its case reference and severity. The
-      managed router submits to Hrz7 directly and has no local queue; there this reports zero.
+      managed router submits to human-review-console directly and has no local queue; there this
+      reports zero.
     """
     router = _container(settings).review_router
     outbox = getattr(router, "outbox", None)

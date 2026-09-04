@@ -1,14 +1,15 @@
-"""OwnershipGraphPort: the boundary that consumes Doc1's resolved beneficial-ownership graph.
+"""OwnershipGraphPort: the boundary that consumes cdd-sow-research's resolved beneficial-ownership
+graph.
 
-G2 does not resolve ownership itself. Doc1 (the CDD / Source-of-Wealth agent) owns that
+G2 does not resolve ownership itself. cdd-sow-research (the CDD / Source-of-Wealth agent) owns that
 resolution and publishes it over an A2A surface whose output shape is FROZEN
-(``cdd-sow-research/docs/ubo-graph-contract.md``). This port names the hand-off; the adapters
-call Doc1 (managed), replay a captured fixture (local), or refuse (onprem). The engine then
+(``cdd-sow-research/docs/ubo-graph-contract.md``). This port names the hand-off; the adapters call
+cdd-sow-research (managed), replay a captured fixture (local), or refuse (onprem). The engine then
 screens each resolved beneficial owner through the same match engine, so an owner on a list is
 caught even when the payer name is clean.
 
 The domain stays pure: this port speaks only in this vertical's :class:`OwnershipGraph`, and the
-adapter is the only place that knows Doc1's JSON.
+adapter is the only place that knows cdd-sow-research's JSON.
 """
 
 from __future__ import annotations

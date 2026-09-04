@@ -171,7 +171,8 @@ CANONICAL_CALLS: dict[str, PortCase] = {
     "ownership_graph": PortCase(
         invoke=_ownership_invoke,
         answered=_ownership_answered,
-        # With no Doc1 URL configured the managed adapter refuses rather than inventing a graph.
+        # With no cdd-sow-research URL configured the managed adapter refuses rather than inventing
+        # a graph.
         managed_refusal=(RuntimeError,),
         detail="resolve one subject's beneficial-ownership graph",
     ),
@@ -201,7 +202,7 @@ CANONICAL_CALLS: dict[str, PortCase] = {
     "evaluation": PortCase(
         invoke=_evaluation_invoke,
         answered=_evaluation_answered,
-        # The managed gate reaches Hrz4 over HTTP, which is unreachable offline.
+        # The managed gate reaches model-quality-gate over HTTP, which is unreachable offline.
         managed_refusal=(Exception,),
         detail="score one golden dataset through the promotion authority",
     ),

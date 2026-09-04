@@ -1,4 +1,5 @@
-"""Rule R8: a screening disposition is ROUTED to Hrz7, not left in a per-repo boolean.
+"""Rule R8: a screening disposition is ROUTED to human-review-console, not left in a per-repo
+boolean.
 
 The system never clears a match on its own, so EVERY disposition routes, including a proposed
 clear. The severity of the disposition sets the control level: a confirmed match demands dual
@@ -62,7 +63,7 @@ def test_a_clean_disposition_still_routes_but_needs_a_single_approver() -> None:
 
 
 def test_the_payload_is_redacted_before_it_leaves_the_process() -> None:
-    """Hrz7 is a shared sink; a raw identifier must never reach the wire."""
+    """human-review-console is a shared sink; a raw identifier must never reach the wire."""
     service = build_screening_service(build_container(_settings()))
     result = service.screen(
         ScreeningRequest(

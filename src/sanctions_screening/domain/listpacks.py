@@ -1,8 +1,8 @@
 """Load sanctions / PEP list packs and jurisdiction guidance packs, as DATA.
 
-The lists screened against and the procedure guidance cited in a memo are data files, not code,
-so a list update is a pack edit under review rather than a code change (the Mkt6 pack
-convention). Packs are JSON rather than YAML for one reason: this module is pure-stdlib domain
+The lists screened against and the procedure guidance cited in a memo are data files, not code, so a
+list update is a pack edit under review rather than a code change (the marketing-compliance-gate
+pack convention). Packs are JSON rather than YAML for one reason: this module is pure-stdlib domain
 code, and ``json`` is stdlib while a YAML parser is a third-party dependency the domain must not
 import. Every entry is obviously fictional.
 

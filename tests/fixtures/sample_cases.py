@@ -15,7 +15,8 @@ ACTOR = "analyst@bank.example"
 #: A tenant partition, so the outbound-review assertions are not all on the empty string.
 TENANT = "demo-bank"
 
-#: A confirmed match: a designated entity (UN pack) whose owners resolve from the Doc1 fixture.
+#: A confirmed match: a designated entity (UN pack) whose owners resolve from the cdd-sow-research
+#: fixture.
 CONFIRMED_CASE = ScreeningRequest(
     subject="Volkov Metals OJSC (FICTIONAL)",
     kind=PartyKind.ENTITY,

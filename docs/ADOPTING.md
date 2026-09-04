@@ -3,7 +3,7 @@
 This repository (G2, the Sanctions Screening Copilot) is a **common base** that a bank, a
 payments institution or another regulated firm forks to build its own **name and payment-message
 screening desk**: a service that scores a party against sanctions and PEP list packs with a
-deterministic fuzzy-match engine, screens the subject's beneficial owners from Doc1's resolved
+deterministic fuzzy-match engine, screens the subject's beneficial owners from `cdd-sow-research`'s resolved
 ownership graph, drafts a disposition memo that may contain no number the engine did not compute,
 and ROUTES every disposition to a human reviewer instead of clearing anything on its own. It
 ships a reusable hexagonal core (a pure-stdlib domain, eight typed ports, three swappable adapter
@@ -37,7 +37,7 @@ building a different vertical rewrites `models.py` and leaves `kernel.py` alone.
 
 If your product is another screening or matching gate, the hexagon, the three profiles, the
 deterministic-band pattern, the groundedness validator in `domain/memo.py`, the eval gate and the
-Hrz7 review routing transfer directly. You replace the list packs and the message field map, and
+`human-review-console` review routing transfer directly. You replace the list packs and the message field map, and
 retune the policy numbers.
 
 Note what the engine deliberately does NOT branch on: `MatchEngine` reads a `MatchPolicy` and
@@ -55,7 +55,7 @@ Upstream keeps evolving these; avoid diverging from them so you can pull fixes c
   contract, not your policy), `managed_readiness.py`, `api/app.py`'s security wiring, the
   `scripts/` demo mechanics, `infra/terraform/` module structure, and the CI workflows.
 - **Adopter-owned** (yours; expect to edit): the *values* in `config/settings.yaml` (region,
-  `policy:` block, review and Doc1 URLs), the list and guidance packs in `rulepacks/`, the
+  `policy:` block, review and `cdd-sow-research` URLs), the list and guidance packs in `rulepacks/`, the
   jurisdiction tuple in `domain/pii.py`, `_FIELD_MAP` in `domain/message_fields.py`,
   `adapters/onprem/*` (the seams your own components land in), the fixtures in
   `tests/fixtures/sample_cases.py` and `src/sanctions_screening/_fixtures/`, the golden
@@ -97,7 +97,7 @@ Three things about the flags, because each one is a deliberate omission or scopi
   could only drift out of step with it.
 - There is **no `--dist` flag**. `--resource` is one literal doing four jobs at once: the
   distribution name in `pyproject.toml`, the GitHub id in `[project.urls]`, the A2A agent-card
-  name in `agent/agent_card.py`, and the Hrz4 eval bundle id `_BUNDLE` in `eval/run_eval.py`.
+  name in `agent/agent_card.py`, and the `model-quality-gate` eval bundle id `_BUNDLE` in `eval/run_eval.py`.
   They are the same string on purpose, so a fork's promotion record and its discovery card
   cannot disagree about which system they describe.
 - `--name-prefix` is optional and is rewritten ONLY inside the `variable "name_prefix"` block in
@@ -146,7 +146,7 @@ reviewable. The script deliberately does NOT make the human decisions below.
    that combine the token, name-part, date-of-birth and identifier sub-scores (`token_weight`
    0.55, `name_part_weight` 0.25, `dob_weight` 0.12, `id_weight` 0.08), and
    `ownership_threshold_pct` 25, the stake at or above which this screening treats a natural
-   person from Doc1's graph as a beneficial owner. An absent key takes the shipped default, so you
+   person from `cdd-sow-research`'s graph as a beneficial owner. An absent key takes the shipped default, so you
    can retune one threshold without restating the rest, and `__post_init__` refuses a
    non-monotonic or out-of-range threshold set at load. Two safety properties are NOT tunable and
    should stay that way: the false-clear guard that forces an exact identifier match or an exact
@@ -157,7 +157,7 @@ reviewable. The script deliberately does NOT make the human decisions below.
 4. **Fixtures and reference data are synthetic, and the list packs are yours.** Everything shipped
    is obviously fictional: the six packs in `src/sanctions_screening/rulepacks/`
    (`ofac_sdn.json`, `un_consolidated.json`, `eu_consolidated.json`, `au_dfat.json`,
-   `pep_list.json` and the `guidance.json` procedure notes), the captured Doc1 UBO graph in
+   `pep_list.json` and the `guidance.json` procedure notes), the captured `cdd-sow-research` UBO graph in
    `src/sanctions_screening/_fixtures/doc1_ubo_graph.json`, the adverse-media corpus in
    `adapters/local/adverse_media.py`, and `tests/fixtures/sample_cases.py`. **The list packs are
    adopter-owned reference data.** This repo ships fictional stand-ins so the engine, the eval and
@@ -180,7 +180,7 @@ reviewable. The script deliberately does NOT make the human decisions below.
    0.99) are in `THRESHOLDS`; the provable-red harness in `_assert_metrics_can_go_red` pins that
    each headline metric can still detect its own defect class, so keep a red case alongside every
    green one when you add a metric. `--mode smoke` is your offline pre-merge check; `--mode gate`
-   asks Hrz4 and refuses to run off the managed profile.
+   asks `model-quality-gate` and refuses to run off the managed profile.
 6. **Deployment posture.** Review the Dockerfile (digest-pinned base, non-root uid 10001,
    `HEALTHCHECK` on `/healthz`), the loopback-by-default binding, and `infra/terraform/` before
    you expose anything. Note the fail-closed preflight in `managed_readiness.py`: while
@@ -198,34 +198,34 @@ owned by sibling systems: integrate rather than rebuild them. The full map, with
 status of each integration, is in [`faq/features-faq.md`](faq/features-faq.md); the status column
 is authoritative in [`COMPLIANCE.md`](../COMPLIANCE.md).
 
-- **Doc1** (the CDD and Source-of-Wealth agent) owns beneficial-ownership RESOLUTION. G2 does not
-  resolve ownership; it consumes Doc1's frozen graph contract through `OwnershipGraphPort` and
+- `cdd-sow-research` (the CDD and Source-of-Wealth agent) owns beneficial-ownership RESOLUTION. G2 does not
+  resolve ownership; it consumes `cdd-sow-research`'s frozen graph contract through `OwnershipGraphPort` and
   screens each resolved owner through the same match engine. Wired today: the managed adapter
   calls `resolve_ubo_graph` at `DOC1_A2A_URL`, the offline adapter replays a captured body through
   the SAME `parse_ubo_graph` reader, so a contract drift breaks the consumer test before it breaks
   production.
-- **Hrz7** (the human-review and maker-checker console) owns review workflow and approvals. Wired
+- `human-review-console` (the human-review and maker-checker console) owns review workflow and approvals. Wired
   today, and it is the reason `ReviewRouterPort` exists: rule R8 means an escalation is ROUTED,
   never merely flagged. Set `HUMAN_REVIEW_URL`, supply the outbound `HUMAN_REVIEW_S2S_TOKEN` and
   `HUMAN_REVIEW_S2S_SIGNING_KEY`, and do not re-implement the console. The managed router refuses rather
   than swallowing an escalation when no console is configured.
-- **Hrz4** (the AI-quality and model-risk gate) owns the promotion verdict. Half-wired: the client
+- `model-quality-gate` (the AI-quality and model-risk gate) owns the promotion verdict. Half-wired: the client
   is here and registers the bundle `sanctions-screening`; you register that bundle,
-  its metrics and its thresholds with Hrz4 so gate mode has an authority to ask.
-- **Hrz5** (observability plus the immutable WORM audit sink) owns the enterprise trail. The
+  its metrics and its thresholds with `model-quality-gate` so gate mode has an authority to ask.
+- `agent-observability` (observability plus the immutable WORM audit sink) owns the enterprise trail. The
   in-repo hash-chained, externally anchored log is the offline stand-in; the managed tracer sends
-  OTLP to the Hrz5 collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. Binding the audit and
-  prompt/response record to Hrz5 is still owed (rule R2).
-- **Hrz3** (the agent registry) owns agent identity, versioning and entitlements. This repo
+  OTLP to the `agent-observability` collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. Binding the audit and
+  prompt/response record to `agent-observability` is still owed (rule R2).
+- `agent-registry` (the agent registry) owns agent identity, versioning and entitlements. This repo
   publishes an A2A card at `/.well-known/agent-card.json` built from the same tool table the
-  runtime binds; registering it with Hrz3 and taking entitlements from it is still owed (rule R4).
-- **Hrz1** (the guardrail gateway) owns prompt-injection defence and output filtering. Not wired
+  runtime binds; registering it with `agent-registry` and taking entitlements from it is still owed (rule R4).
+- `agent-guardrail-gateway` (the guardrail gateway) owns prompt-injection defence and output filtering. Not wired
   today, and honestly so: no model call currently executes on any profile. Bind a guardrail port
   before the narration adapter starts sending an analyst's free text to a model (rule R1).
-- **Hrz2** (the governed knowledge base) owns ACL-aware grounded retrieval. Not used: this
+- `enterprise-knowledge-base` (the governed knowledge base) owns ACL-aware grounded retrieval. Not used: this
   service grounds a memo in the engine's own facts and its list-pack citations, not in retrieval.
   A fork that adds a retrieval step takes on rule R3 and P-05 with it.
-- **Rsk3** (the architecture and requirements validator) owns intake validation (rule R6). That is
+- `architecture-validator` (the architecture and requirements validator) owns intake validation (rule R6). That is
   a process step at project intake, not a code control; record the reference in
   [`COMPLIANCE.md`](../COMPLIANCE.md) when you pass it.
 

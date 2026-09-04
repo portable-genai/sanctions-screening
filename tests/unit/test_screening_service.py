@@ -100,7 +100,8 @@ def test_no_planted_identifier_reaches_the_model_the_worm_record_or_the_console(
 
     The subject key and the analyst's context take different routes. The context was masked on
     its way into the audit summary; the SUBJECT went into the memo facts verbatim, so the model
-    read the national id of the person being screened. The owner names Doc1 resolves travel the
+    read the national id of the person being screened. The owner names cdd-sow-research resolves
+    travel the
     same route and are not the caller's text at all: they are natural persons named by another
     service, and they reached the memo facts unmasked too.
 
@@ -142,7 +143,7 @@ def test_no_planted_identifier_reaches_the_model_the_worm_record_or_the_console(
         default=str,
     )
     for token in planted:
-        assert token not in outbound, f"{token} left for Hrz7 in {outbound!r}"
+        assert token not in outbound, f"{token} left for human-review-console in {outbound!r}"
 
 
 def test_adverse_media_is_advisory_and_does_not_move_the_band() -> None:

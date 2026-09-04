@@ -10,7 +10,7 @@ Three properties make it worth running in front of somebody:
 * **Nothing is faked.** No engine stub, no pre-baked JSON. The match bands, the audit records,
   the routing references and the tamper verdict are produced by the shipped code.
 * **It is bounded.** The demo proves an offline, single-process seam. It does not prove a live
-  Doc1, a live console or the managed profile; those need a cloud project.
+  cdd-sow-research, a live console or the managed profile; those need a cloud project.
 * **It is replayable.** Same inputs, same output, every time, because the consequential decision
   is deterministic.
 
@@ -86,7 +86,7 @@ ROUTINE_CASE = models.ScreeningRequest(
     context="routine supplier onboarding raised from 192.0.2.10",
 )
 
-#: A designated entity whose owners resolve from the Doc1 fixture: a confirmed match.
+#: A designated entity whose owners resolve from the cdd-sow-research fixture: a confirmed match.
 ESCALATING_CASE = models.ScreeningRequest(
     subject="Volkov Metals OJSC (FICTIONAL)",
     kind=models.PartyKind.ENTITY,
@@ -143,7 +143,8 @@ STEPS: tuple[Step, ...] = (
         label="A designated party: confirmed match, dual control, routed (rule R8)",
         narration=(
             "A designated entity. The match confidence and band are pure engine output. Its "
-            "beneficial owners are resolved from Doc1 and screened too, one of them a PEP. A "
+            "beneficial owners are resolved from cdd-sow-research and screened too, one of them a "
+            "PEP. A "
             "confirmed match demands dual control, and it is routed in the same call."
         ),
     ),
@@ -299,7 +300,6 @@ class DemoRun:
             title="Deployment",
             rows=(
                 Row("Service", SERVICE_NAME),
-                Row("Catalog id", CATALOG_ID),
                 Row("Profile", self.settings.profile, "ok"),
                 Row("Profiles bound for every port", ", ".join(profiles)),
                 Row("Residency region", self.settings.region),
@@ -622,7 +622,6 @@ class DemoRun:
         current = self.results[-1]
         return {
             "service": SERVICE_NAME,
-            "catalog_id": CATALOG_ID,
             "repository": REPOSITORY,
             "profile": self.settings.profile,
             "region": self.settings.region,

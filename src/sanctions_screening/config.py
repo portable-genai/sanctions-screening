@@ -419,7 +419,7 @@ class Settings:
     #: that verifies perfectly. Empty means no anchor, which is right for the ephemeral
     #: ``:memory:`` store and wrong for anything durable.
     audit_anchor_path: str = ""
-    #: Base URL of the Hrz7 Human-Review console the R8 producer path submits to.
+    #: Base URL of the human-review-console Human-Review console the R8 producer path submits to.
     review_url: str = ""
     #: The audience the managed IAP identity adapter verifies the signed assertion AGAINST: the
     #: IAP-protected resource, ``/projects/<NUM>/global/backendServices/<ID>`` behind an HTTPS
@@ -438,7 +438,8 @@ class Settings:
     #: a trace resource path. Empty is valid: on Cloud Run the exporter resolves it
     #: from the metadata server.
     project_id: str = ""
-    #: Doc1's A2A base URL, which the managed ownership adapter resolves UBO graphs from. Empty
+    #: cdd-sow-research's A2A base URL, which the managed ownership adapter resolves UBO graphs
+    #: from. Empty
     #: means unconfigured, and the managed adapter refuses rather than inventing an empty graph.
     doc1_a2a_url: str = ""
     #: The bank-owned match policy block (thresholds and weights). Empty means the shipped

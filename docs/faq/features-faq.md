@@ -9,14 +9,14 @@ what is computed deterministically vs narrated, and, importantly, where its resp
 ## What does G2 actually produce?
 
 A cited **screening disposition**. From a subject name (plus optionally its kind, date of birth,
-identifiers, jurisdiction, a parsed payment message and a Doc1 ownership key) it produces a
+identifiers, jurisdiction, a parsed payment message and a `cdd-sow-research` ownership key) it produces a
 `ScreeningResult` carrying:
 
 - the **matches** against the sanctions and PEP list packs, each with a confidence figure from
   0 to 100, a band (`clear`, `weak`, `possible`, `strong`, `confirmed`) and the arithmetic that
   produced it, kept in `NameScore.arithmetic` so a reviewer can read the sum rather than trust it;
 - the **parties extracted from the payment message**, each screened in its own right;
-- the **beneficial owners** resolved from Doc1's ownership graph, each screened through the same
+- the **beneficial owners** resolved from `cdd-sow-research`'s ownership graph, each screened through the same
   engine, so an owner on a list is caught even when the payer name is clean;
 - an **adverse-media** set, advisory only;
 - a **disposition memo**, and a proposed disposition (`false_positive`, `needs_info`,
@@ -89,15 +89,15 @@ authoritative status of each row is the matching row in
 
 | Concern | Owned by | G2's role, today |
 |---|---|---|
-| Beneficial-ownership resolution (the UBO graph) | **Doc1**, the CDD and Source-of-Wealth agent | consumes it through `OwnershipGraphPort` and screens each resolved owner; the managed adapter calls Doc1's A2A `resolve_ubo_graph`, the offline adapter replays a captured body through the SAME reader, so a contract drift breaks a test here first |
-| Human review, maker-checker, dual control | **Hrz7**, the human-review console | routes every disposition to it over the shared review kit (rule R8); wired, and the managed router refuses rather than swallowing an escalation with no console configured |
-| AI-quality, eval and promotion gate | **Hrz4** | registers the bundle `sanctions-screening`; `--mode gate` asks Hrz4 for the verdict and refuses to run off the managed profile. Registering the bundle and its thresholds with Hrz4 is still owed |
-| Observability, tracing and the enterprise WORM audit sink | **Hrz5** | the managed tracer sends OTLP to the Hrz5 collector when configured; the in-repo hash-chained, externally anchored log is the offline stand-in. Binding the audit record to Hrz5 is still owed (rule R2) |
-| Agent registry, versioning, identity, entitlements | **Hrz3** | publishes an A2A card at `/.well-known/agent-card.json` built from the same tool table the runtime binds. Registering it with Hrz3 is still owed (rule R4) |
-| Runtime guardrail: prompt-injection defence, output screening | **Hrz1** | not wired, and honestly so: no model call executes today. It becomes mandatory the moment the narration adapter sends an analyst's free text to a model (rule R1) |
-| Governed, ACL-aware knowledge base with citations | **Hrz2** | not used: a memo is grounded in the engine's own facts and the list-pack citations, not in retrieval. A fork that adds retrieval takes on rule R3 and P-05 with it |
-| Architecture and requirements validation at intake | **Rsk3** | a process step at project intake, not a code control (rule R6) |
-| Customer-facing marketing and financial-promotions claim checking | **Mkt6** | not applicable: this service produces no customer-facing output (rule R7, principle P-13) |
+| Beneficial-ownership resolution (the UBO graph) | `cdd-sow-research`, the CDD and Source-of-Wealth agent | consumes it through `OwnershipGraphPort` and screens each resolved owner; the managed adapter calls `cdd-sow-research`'s A2A `resolve_ubo_graph`, the offline adapter replays a captured body through the SAME reader, so a contract drift breaks a test here first |
+| Human review, maker-checker, dual control | `human-review-console`, the human-review console | routes every disposition to it over the shared review kit (rule R8); wired, and the managed router refuses rather than swallowing an escalation with no console configured |
+| AI-quality, eval and promotion gate | `model-quality-gate` | registers the bundle `sanctions-screening`; `--mode gate` asks `model-quality-gate` for the verdict and refuses to run off the managed profile. Registering the bundle and its thresholds with `model-quality-gate` is still owed |
+| Observability, tracing and the enterprise WORM audit sink | `agent-observability` | the managed tracer sends OTLP to the `agent-observability` collector when configured; the in-repo hash-chained, externally anchored log is the offline stand-in. Binding the audit record to `agent-observability` is still owed (rule R2) |
+| Agent registry, versioning, identity, entitlements | `agent-registry` | publishes an A2A card at `/.well-known/agent-card.json` built from the same tool table the runtime binds. Registering it with `agent-registry` is still owed (rule R4) |
+| Runtime guardrail: prompt-injection defence, output screening | `agent-guardrail-gateway` | not wired, and honestly so: no model call executes today. It becomes mandatory the moment the narration adapter sends an analyst's free text to a model (rule R1) |
+| Governed, ACL-aware knowledge base with citations | `enterprise-knowledge-base` | not used: a memo is grounded in the engine's own facts and the list-pack citations, not in retrieval. A fork that adds retrieval takes on rule R3 and P-05 with it |
+| Architecture and requirements validation at intake | `architecture-validator` | a process step at project intake, not a code control (rule R6) |
+| Customer-facing marketing and financial-promotions claim checking | `marketing-compliance-gate` | not applicable: this service produces no customer-facing output (rule R7, principle P-13) |
 
 So the review console, the eval platform, the audit sink, the registry, the guardrail gateway and
 the ownership resolver are **dependencies**, not features of this repo.

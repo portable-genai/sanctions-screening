@@ -25,10 +25,10 @@ imports, and its own control case
 - **`local`** (the dev, test and CI default) is a real, working, SDK-free offline stack, not a
   pile of stubs. The audit sink is a hash-chained SQLite WORM log from the commons, identity is
   seeded dev personas, the review router enqueues into the review kit's inspectable outbox, the
-  ownership adapter replays a captured Doc1 graph, adverse media answers from a small fictional
+  ownership adapter replays a captured `cdd-sow-research` graph, adverse media answers from a small fictional
   corpus, and narration returns the real deterministic memo from `domain/memo.build_memo`.
-- **`gcp`** is the managed stack: Cloud Logging WORM, IAP identity, the Hrz7 service intake over
-  S2S, Doc1 over A2A, and the managed tracer. Every cloud SDK import is LAZY, inside the method,
+- **`gcp`** is the managed stack: Cloud Logging WORM, IAP identity, the `human-review-console` service intake over
+  S2S, `cdd-sow-research` over A2A, and the managed tracer. Every cloud SDK import is LAZY, inside the method,
   so the other two profiles import these modules with no SDK installed at all.
 - **`onprem`** is fail-fast placeholders that satisfy the same Protocols and RAISE. That is the
   reversibility proof (P-12) and it is deliberate: a review router that silently returned would
@@ -69,7 +69,7 @@ domain never changes, the exit is an adapter exercise rather than a rewrite: the
 arithmetic, the citations and the escalation rule are identical on the way out. The step list is
 in [`../onprem-migration.md`](../onprem-migration.md).
 
-Two seams deserve advance thought. The ownership source is Doc1's frozen contract, parsed by the
+Two seams deserve advance thought. The ownership source is `cdd-sow-research`'s frozen contract, parsed by the
 shared `adapters/_ubo_contract.py::parse_ubo_graph` that BOTH the managed and offline adapters
 use, so whatever you bind on premises must produce that shape rather than a private one. And the
 review router must not be stubbed to return quietly: rule R8 exists because a flag nobody reads
@@ -104,7 +104,7 @@ tool results and the A2A card are built from, so a result is plain JSON with no 
 Three things, stated rather than glossed:
 
 - **Tamper-evidence is scoped to what the local sink can prove.** The in-repo chain plus anchor
-  detects edits, deletions, reorders and truncation, but production WORM custody is **Hrz5**'s
+  detects edits, deletions, reorders and truncation, but production WORM custody is `agent-observability`'s
   job (or a locked Cloud Logging bucket), and this repo's managed adapter writes to it rather
   than replacing it.
 - **The list packs are reference data, not a portable asset of this repo.** The six packs in
@@ -117,6 +117,6 @@ Three things, stated rather than glossed:
   managed process while either is on the primary journey. That is the honest state, not a
   portability defect: the offline profile is the complete one.
 
-Beneficial-ownership resolution belongs to **Doc1**, the promotion verdict to **Hrz4**, the review
-console to **Hrz7**, the agent registry to **Hrz3**, and guardrails to **Hrz1**. Porting this
+Beneficial-ownership resolution belongs to `cdd-sow-research`, the promotion verdict to `model-quality-gate`, the review
+console to `human-review-console`, the agent registry to `agent-registry`, and guardrails to `agent-guardrail-gateway`. Porting this
 service does not port those; see [features-faq.md](features-faq.md) for the boundary.

@@ -1,10 +1,10 @@
-"""Consumer contract test against Doc1's FROZEN UBO-graph shape.
+"""Consumer contract test against cdd-sow-research's FROZEN UBO-graph shape.
 
-G2 consumes Doc1's resolved ownership graph over A2A. Doc1 froze that shape in
-``cdd-sow-research/docs/ubo-graph-contract.md`` and this repo pins a fixture captured from it.
-The point of this suite is that drift in Doc1 breaks G2's TEST rather than silently misreading who
-owns whom: the same strict reader the managed adapter uses over the wire is driven here over the
-captured fixture (green), then over deliberately drifted copies (red).
+G2 consumes cdd-sow-research's resolved ownership graph over A2A. cdd-sow-research froze that shape
+in ``cdd-sow-research/docs/ubo-graph-contract.md`` and this repo pins a fixture captured from it.
+The point of this suite is that drift in cdd-sow-research breaks G2's TEST rather than silently
+misreading who owns whom: the same strict reader the managed adapter uses over the wire is driven
+here over the captured fixture (green), then over deliberately drifted copies (red).
 """
 
 from __future__ import annotations
@@ -37,13 +37,16 @@ def test_the_frozen_fixture_parses_and_carries_the_expected_owners() -> None:
     assert graph.subject_name == "Acme Holdings Pte Ltd (FICTIONAL)"
     names = {owner.name for owner in graph.beneficial_owners}
     assert "Ines Quiller (FICTIONAL)" in names
-    # A percentage is a number in 0..100, never a fraction (Doc1's single most likely silent break).
+    # A percentage is a number in 0..100, never a fraction (cdd-sow-research's single most likely
+    # silent break).
     for edge in graph.edges:
         assert 0.0 <= edge.pct <= 100.0
 
 
 def test_a_renamed_owners_field_breaks_the_consumer_test() -> None:
-    """If Doc1 renamed ``beneficial_owners``, the reader must fail loudly, not read zero owners."""
+    """If cdd-sow-research renamed ``beneficial_owners``, the reader must fail loudly, not read zero
+    owners.
+    """
     drifted = copy.deepcopy(_raw_fixture())
     drifted["owners"] = drifted.pop("beneficial_owners")
     with pytest.raises(UboContractError):
