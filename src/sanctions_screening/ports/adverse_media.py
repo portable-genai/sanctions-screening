@@ -3,7 +3,8 @@
 Advisory to the disposition MEMO, never to the band. The match band and the recommendation are
 the deterministic engine's alone; adverse media enriches the narrative a reviewer reads, and the
 eval pins that the bands are unchanged when this port is stubbed empty. Families: managed
-(Grounding / Deep Research, lazy SDK), local fixture, onprem fail-fast.
+(a grounded-search index over discoveryengine, lazy SDK, not yet wired), local fixture, onprem
+fail-fast.
 """
 
 from __future__ import annotations
