@@ -7,6 +7,7 @@ import sys
 
 from hex_service_kit.logging import configure_logging
 
+from ..adapters.controls import RecordingReviewRouter
 from ..config import build_container
 from ..domain.models import PartyKind, ScreeningRequest
 from ..service_factory import build_screening_service
@@ -42,8 +43,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  severity: {result.severity.value}   owners screened: {result.owners_screened}")
         print(f"  requires_human_review: {result.requires_human_review}")
         # Rule R8 on the CLI path too: every disposition is routed, never merely printed.
-        ref = container.review_router.route(result, maker=args.actor, tenant=args.tenant)
-        print(f"  routed to human review: {ref}")
+        routing = RecordingReviewRouter(container.review_router)
+        ref = routing.route(result, maker=args.actor, tenant=args.tenant)
+        print(f"  human review hand-off : {routing.outcome.value} {ref}".rstrip())
         return 0
 
     return 2  # pragma: no cover - argparse requires a subcommand

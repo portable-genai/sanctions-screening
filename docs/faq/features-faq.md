@@ -60,7 +60,8 @@ No, in both directions, and this is the deliberate design. `requires_human_revie
 its own. The escalation is not a per-repo boolean either. Setting the flag and calling
 `ReviewRouterPort.route` is one act, performed in the same request that produced the result, on
 the API, the CLI and the agent tool alike (dependency rule R8), and the response carries a
-`review_ref` so a caller can tell a routed escalation from one that stopped here. A confirmed
+`review_ref` and a `review_routing` outcome (`routed`, `failed`, `off`) so a caller can tell a
+routed escalation from one that stopped here. A confirmed
 match maps to CRITICAL severity, which demands two approvals rather than one.
 `tests/unit/test_review_routing.py` is the standing gate.
 
@@ -90,7 +91,7 @@ authoritative status of each row is the matching row in
 | Concern | Owned by | G2's role, today |
 |---|---|---|
 | Beneficial-ownership resolution (the UBO graph) | `cdd-sow-research`, the CDD and Source-of-Wealth agent | consumes it through `OwnershipGraphPort` and screens each resolved owner; the managed adapter calls `cdd-sow-research`'s A2A `resolve_ubo_graph`, the offline adapter replays a captured body through the SAME reader, so a contract drift breaks a test here first |
-| Human review, maker-checker, dual control | `human-review-console`, the human-review console | routes every disposition to it over the shared review kit (rule R8); wired, and the managed router refuses rather than swallowing an escalation with no console configured |
+| Human review, maker-checker, dual control | `human-review-console`, the human-review console | routes every disposition to it over the shared review kit (rule R8); wired; with routing on and no console configured the managed profile refuses to boot, and `SANCTIONS_REVIEW_ROUTING` switches routing (default on) |
 | AI-quality, eval and promotion gate | `model-quality-gate` | registers the bundle `sanctions-screening`; `--mode gate` asks `model-quality-gate` for the verdict and refuses to run off the managed profile. Registering the bundle and its thresholds with `model-quality-gate` is still owed |
 | Observability, tracing and the enterprise WORM audit sink | `agent-observability` | the managed tracer sends OTLP to the `agent-observability` collector when configured; the in-repo hash-chained, externally anchored log is the offline stand-in. Binding the audit record to `agent-observability` is still owed (rule R2) |
 | Agent registry, versioning, identity, entitlements | `agent-registry` | publishes an A2A card at `/.well-known/agent-card.json` built from the same tool table the runtime binds. Registering it with `agent-registry` is still owed (rule R4) |

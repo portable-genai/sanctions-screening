@@ -13,8 +13,8 @@ No. It is decision SUPPORT, and the design makes that structural rather than a p
 the system never clears a match on its own. The escalation is not a local boolean either. Setting
 the flag and calling `ReviewRouterPort.route` is one act, executed in the same request that
 produced the result, so the escalation never depends on a later job that may not exist, and the
-response carries a `review_ref` so a caller can distinguish a routed escalation from one that
-stopped in this process. A confirmed match maps to CRITICAL severity, which the shared review
+response carries a `review_ref` and a `review_routing` outcome (`routed`, `failed`, `off`) so a
+caller can distinguish a routed escalation from one that stopped in this process. A confirmed match maps to CRITICAL severity, which the shared review
 payload marks as demanding dual control (two approvals) rather than a single checker. The console
 itself is `human-review-console`; this repo routes to it (dependency rule R8) and does not reimplement it.
 `tests/unit/test_review_routing.py` asserts the routing, not the flag, and the on-premises
