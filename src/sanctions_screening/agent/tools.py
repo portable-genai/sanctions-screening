@@ -20,6 +20,7 @@ from typing import TYPE_CHECKING, Any
 from hex_service_kit.serialization import to_jsonable
 from pii_kit import redact
 
+from ..adapters.controls import RecordingReviewRouter
 from ..config import Container, Settings, build_container
 from ..domain.models import PartyKind, ScreeningRequest
 from ..domain.pii import PII_PATTERNS
@@ -55,11 +56,13 @@ def _screen(
     service = build_screening_service(container)
     scope = tenant or container.settings.tenant
     result = service.screen(request, actor=actor, tenant=scope)
-    review_ref = container.review_router.route(result, maker=actor, tenant=tenant)
+    routing = RecordingReviewRouter(container.review_router)
+    review_ref = routing.route(result, maker=actor, tenant=tenant)
     payload = _redacted(to_jsonable(result))
     if not isinstance(payload, dict):  # pragma: no cover - dataclasses serialise to objects
         raise TypeError("a screening result must serialise to a JSON object")
     payload["review_ref"] = review_ref
+    payload["review_routing"] = routing.outcome.value
     return payload
 
 
@@ -87,7 +90,8 @@ def screen_name(
 
     Returns:
       A JSON-safe result with every string masked for personal data (P-04), plus ``review_ref``:
-      where the disposition WENT.
+      where the disposition WENT (empty unless it was routed), and ``review_routing``:
+      ``routed``, ``failed`` (NOT queued for review), ``off`` or ``not_required``.
     """
     resolved_kind = PartyKind(kind) if kind in tuple(PartyKind) else PartyKind.UNKNOWN
     request = ScreeningRequest(subject=subject, kind=resolved_kind, subject_id=subject_id)
@@ -110,7 +114,7 @@ def screen_payment_message(
       tenant: Tenant partition asserted on the outbound review.
 
     Returns:
-      A JSON-safe result masked for personal data, plus ``review_ref``.
+      A JSON-safe result masked for personal data, plus ``review_ref`` and ``review_routing``.
     """
     request = ScreeningRequest.from_message(subject, message)
     return _screen(request, actor, tenant, settings)

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 from ..domain.models import PartyKind, ScreeningRequest, ScreeningResult
@@ -70,15 +72,23 @@ class ScreenResponse(BaseModel):
     memo: str
     memo_grounded: bool
     #: Where the disposition WENT (rule R8): the human-review-console review id, or the local queue
-    #: reference.
-    #: Never empty, because every disposition routes.
+    #: reference. Empty exactly when ``review_routing`` is not ``routed``.
     review_ref: str = ""
+    #: What happened to the hand-off: routed, failed, off or not_required. ``failed`` means the
+    #: disposition is NOT queued for review, and the console says so.
+    review_routing: Literal["routed", "failed", "off", "not_required"] = "not_required"
     party_screenings: list[PartyScreeningModel] = []
     citations: list[CitationModel] = []
     flags: list[str] = []
 
     @classmethod
-    def from_domain(cls, result: ScreeningResult, *, review_ref: str = "") -> ScreenResponse:
+    def from_domain(
+        cls,
+        result: ScreeningResult,
+        *,
+        review_ref: str = "",
+        review_routing: str = "not_required",
+    ) -> ScreenResponse:
         return cls(
             subject=result.subject,
             band=result.band.value,
@@ -90,6 +100,7 @@ class ScreenResponse(BaseModel):
             memo=result.memo.text,
             memo_grounded=result.memo.grounded,
             review_ref=review_ref,
+            review_routing=review_routing,  # type: ignore[arg-type]
             party_screenings=[
                 PartyScreeningModel(
                     party_name=s.party.name,

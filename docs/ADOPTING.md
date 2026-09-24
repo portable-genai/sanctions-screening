@@ -207,8 +207,9 @@ is authoritative in [`COMPLIANCE.md`](../COMPLIANCE.md).
 - `human-review-console` (the human-review and maker-checker console) owns review workflow and approvals. Wired
   today, and it is the reason `ReviewRouterPort` exists: rule R8 means an escalation is ROUTED,
   never merely flagged. Set `HUMAN_REVIEW_URL`, supply the outbound `HUMAN_REVIEW_S2S_TOKEN` and
-  `HUMAN_REVIEW_S2S_SIGNING_KEY`, and do not re-implement the console. The managed router refuses rather
-  than swallowing an escalation when no console is configured.
+  `HUMAN_REVIEW_S2S_SIGNING_KEY`, and do not re-implement the console. With review routing on (the
+  default), the managed profile refuses to boot when no console is configured, and
+  `SANCTIONS_REVIEW_ROUTING=off` is the stated way to run without it.
 - `model-quality-gate` (the AI-quality and model-risk gate) owns the promotion verdict. Half-wired: the client
   is here and registers the bundle `sanctions-screening`; you register that bundle,
   its metrics and its thresholds with `model-quality-gate` so gate mode has an authority to ask.

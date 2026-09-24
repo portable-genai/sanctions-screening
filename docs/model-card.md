@@ -63,8 +63,10 @@ grounded in the engine's own facts and its list-pack citations, not in retrieved
   proposed clear, and setting it and calling `ReviewRouterPort.route` is ONE act performed in the
   same request on the API, the CLI and the agent tool alike. A confirmed match maps to CRITICAL
   severity, which demands two approvals. `tests/unit/test_review_routing.py` asserts the routing
-  rather than the flag; the managed router refuses rather than swallowing an escalation with no
-  console configured, and the on-premises placeholder refuses rather than dropping it.
+  rather than the flag; under the managed profile a deployment with routing on and no console
+  configured refuses to boot, a hand-off that fails at request time is reported as
+  `review_routing: "failed"` rather than swallowed, and the on-premises placeholder refuses
+  rather than dropping it.
 
 ## Adapters and profiles
 
