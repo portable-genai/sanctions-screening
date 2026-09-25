@@ -28,6 +28,25 @@ function reviewRoutingOf(body: string): string | undefined {
   }
 }
 
+// The party kinds `ScreenRequest.kind` accepts; the kind changes how a name is matched.
+const PARTY_KINDS = ["individual", "entity", "vessel", "unknown"];
+
+// Read the optional payment-message fields: an object of string values, keyed by ISO 20022
+// element name or SWIFT tag. Blank means no message, so only the subject is screened.
+function parseMessage(raw: string): Record<string, string> {
+  if (!raw.trim()) return {};
+  const parsed: unknown = JSON.parse(raw);
+  if (
+    typeof parsed !== "object" ||
+    parsed === null ||
+    Array.isArray(parsed) ||
+    Object.values(parsed).some((value) => typeof value !== "string")
+  ) {
+    throw new Error("the payment message must be a JSON object of string fields");
+  }
+  return parsed as Record<string, string>;
+}
+
 interface CardSummary {
   name?: string;
   description?: string;
@@ -36,8 +55,13 @@ interface CardSummary {
 
 export default function Home() {
   const [persona, setPersona] = useState(PERSONAS[0]);
-  const [subject, setSubject] = useState("Acme Holdings (FICTIONAL)");
-  const [text, setText] = useState("urgent data breach reported by the branch");
+  // Prefilled with a fictional subject on the local OFAC sample list, so the first submit shows a
+  // real match, its arithmetic and the list entry it cites.
+  const [subject, setSubject] = useState("Marisol Quintana (FICTIONAL)");
+  const [kind, setKind] = useState("individual");
+  const [dob, setDob] = useState("1975-09-30");
+  const [jurisdiction, setJurisdiction] = useState("SG");
+  const [messageText, setMessageText] = useState("");
   const [result, setResult] = useState("");
   const [failed, setFailed] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -62,10 +86,11 @@ export default function Home() {
     setBusy(true);
     setFailed(false);
     try {
-      const response = await fetch(API + "/v1/triage", {
+      const message = parseMessage(messageText);
+      const response = await fetch(API + "/v1/screen", {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Dev-Persona": persona },
-        body: JSON.stringify({ subject, text }),
+        body: JSON.stringify({ subject, kind, dob, jurisdiction, message }),
       });
       const body = await response.text();
       setFailed(!response.ok);
@@ -83,7 +108,7 @@ export default function Home() {
       <h1>{card?.name ?? "Agent console"}</h1>
       <p className="sub">
         {card?.description ??
-          "Submit a case. The decision is deterministic, cited, and routed to a human reviewer when it escalates."}
+          "Screen a party. The match band is deterministic, cited, and every disposition is routed to a human reviewer."}
       </p>
 
       <form onSubmit={submit}>
@@ -102,17 +127,39 @@ export default function Home() {
         </fieldset>
 
         <fieldset>
-          <legend>The case</legend>
+          <legend>The party to screen</legend>
           <label>
-            Subject
+            Subject name
             <input value={subject} onChange={(event) => setSubject(event.target.value)} />
           </label>
           <label>
-            Description
-            <textarea value={text} onChange={(event) => setText(event.target.value)} />
+            Kind
+            <select value={kind} onChange={(event) => setKind(event.target.value)}>
+              {PARTY_KINDS.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
           </label>
-          <button type="submit" disabled={busy}>
-            {busy ? "Working" : "Triage this case"}
+          <label>
+            Date of birth (YYYY-MM-DD, optional; scored against the list entry&apos;s)
+            <input value={dob} onChange={(event) => setDob(event.target.value)} />
+          </label>
+          <label>
+            Jurisdiction (optional; recorded on the screened party, never scored into the band)
+            <input value={jurisdiction} onChange={(event) => setJurisdiction(event.target.value)} />
+          </label>
+          <label>
+            Payment message (optional JSON; each named party is screened too)
+            <textarea
+              value={messageText}
+              placeholder={'{ "Cdtr/Nm": "Redsea Shipping Ltd (FICTIONAL)" }'}
+              onChange={(event) => setMessageText(event.target.value)}
+            />
+          </label>
+          <button type="submit" disabled={busy || !subject.trim()}>
+            {busy ? "Working" : "Screen this party"}
           </button>
         </fieldset>
       </form>
