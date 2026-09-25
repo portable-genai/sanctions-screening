@@ -158,7 +158,7 @@ assertion, and this UI discards those.
 | `lib/server/identity.ts` | The only place an actor is decided. Never reads a browser-supplied value except the validated dev persona. |
 | `app/api/agent/[...path]/route.ts` | The same-origin reverse proxy: strip, resolve, forward, answer. |
 | `proxy.ts` | The document-layer header baseline on every response. |
-| `app/page.tsx` | The console itself. It reads the service's agent card for its own title, so no product name is hardcoded here. |
+| `app/page.tsx` | The console itself: a screening form (subject name, kind, date of birth, jurisdiction, optional payment-message fields) that posts `POST /v1/screen`, prefilled with a fictional name on the local OFAC sample list so the first submit shows a real match. It reads the service's agent card for its own title, so no product name is hardcoded here. |
 | `tests/` | Node tests for the policy modules, plus the scanner that fails the build on a two-state environment read anywhere in `ui/`. No browser engine, so they run anywhere. |
 
 ## Bounds of this UI
