@@ -10,7 +10,9 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from ...config import Settings
+from hex_service_kit import provenance
+
+from ...config import OFFLINE_STUB_MODEL, Settings
 from ...domain.memo import build_memo
 
 
@@ -21,4 +23,8 @@ class LocalNarrationAdapter:
         self._settings = settings
 
     def draft_memo(self, facts: Mapping[str, object]) -> str:
-        return build_memo(facts)
+        memo = build_memo(facts)
+        # What answered this draft, for the console's model pill: the same name `generator_model`
+        # reports under this binding, so the configured pill and the answered pill agree.
+        provenance.note_model(OFFLINE_STUB_MODEL)
+        return memo
