@@ -70,6 +70,13 @@ depends on a later job that may not exist.
 | `AuditSinkPort` | hash-chained SQLite WORM (commons) | Cloud Logging WORM (lazy) | placeholder |
 | `IdentityPort` | seeded personas (commons) | IAP assertion (lazy) | placeholder |
 | `ReviewRouterPort` | review-kit outbox (offline, inspectable) | `human-review-console` service intake over S2S | placeholder |
+| `GuardrailPort` | deterministic injection/jailbreak heuristic | Model Armor on the regional host (lazy), fail closed | placeholder |
+
+The guardrail (rule R1) screens the memo draft, the one generation call: the subject and then the
+whole prompt INPUT before the drafter is called, and the draft OUTPUT before the groundedness check
+may accept it (`domain/screening_service.py`). A refusal, a block or a guardrail that could not
+decide, is audited `BLOCKED` and the deterministic memo stands, so the disposition is never
+blocked and never carries a partial draft. `SANCTIONS_GUARDRAIL` switches it (default on).
 
 The on-prem placeholders RAISE. A review router that silently returned would convert every
 consequential result into an unreviewed one, which is worse than a missing feature.

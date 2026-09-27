@@ -48,7 +48,8 @@ grounded in the engine's own facts and its list-pack citations, not in retrieved
   before the review payload leaves the process (`adapters/_review_payload.py`, against every
   jurisdiction's rows because the console is a shared sink) and before any agent tool result
   returns (`agent/tools.py`). Anyone binding a real model here should decide, in their own DPIA,
-  whether the party name may cross that boundary, and bind the `agent-guardrail-gateway` port if so.
+  whether the party name may cross that boundary. The guardrail port screens whatever does cross it
+(rule R1).
 - **Every draft is validated, and a bad one is discarded rather than repaired.**
   `domain/memo.py::is_grounded` compares every numeric token in the draft against
   `allowed_numbers`, the exact set the engine computed or already quoted in its own facts (so a
@@ -97,10 +98,12 @@ would read it.
   rate limit, a timeout and a circuit breaker on the narration call, and a switch that forces
   deterministic-only operation with the model disabled. The fallback path already makes that
   switch cheap: turning the model off degrades the memo prose and moves no figure.
-- **Prompt-injection screening through `agent-guardrail-gateway`** (rule R1). Untrusted text reaches this service in
-  the subject name, the payment-message fields and the analyst context. Only the first two can
-  currently reach a narration prompt, but a guardrail port must be bound at the model boundary
-  before one is wired, failing closed to deterministic-only when the screen is unavailable.
+- **Prompt-injection screening at the model boundary** (rule R1): bound. Untrusted text reaches
+  this service in the subject name, the payment-message fields and the analyst context. Only the
+  first two reach the drafter, and only through the prompt `domain/memo.py::memo_prompt` renders:
+  the guardrail screens the subject and then that whole prompt before the drafter is called, and
+  the draft before the groundedness check (`domain/screening_service.py`, Model Armor under
+  `gcp`). It fails closed to the deterministic memo, audited `BLOCKED`.
 - **A managed-profile eval run through the `model-quality-gate`** (P-08, rule R5). The offline eval scores
   the deterministic pipeline: `memo_groundedness` currently measures a memo the engine itself
   wrote, which is grounded by construction and therefore not yet a test of a model. Register the

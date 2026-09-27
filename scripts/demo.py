@@ -50,6 +50,7 @@ from sanctions_screening.domain import (
     kernel,
     models,
 )
+from sanctions_screening.domain.memo import memo_prompt
 from sanctions_screening.domain.pii import (
     JURISDICTIONS,
 )
@@ -741,7 +742,12 @@ def _exit_adverse(container: Any) -> Any:
 
 
 def _exit_narration(container: Any) -> Any:
-    return container.narration.draft_memo({"subject": "x", "matches": [], "owners_screened": 0})
+    facts = {"subject": "x", "matches": [], "owners_screened": 0}
+    return container.narration.draft_memo(facts, prompt=memo_prompt(facts))
+
+
+def _exit_guardrail(container: Any) -> Any:
+    return container.guardrail.screen("routine disposition memo text", kernel.Direction.INPUT)
 
 
 def _exit_tracer(container: Any) -> Any:
@@ -764,6 +770,7 @@ EXIT_CALLS: dict[str, Callable[[Any], Any]] = {
     "ownership_graph": _exit_ownership,
     "adverse_media": _exit_adverse,
     "narration": _exit_narration,
+    "guardrail": _exit_guardrail,
 }
 
 

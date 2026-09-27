@@ -57,7 +57,7 @@ class _HallucinatingNarration:
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
 
-    def draft_memo(self, facts: Mapping[str, object]) -> str:
+    def draft_memo(self, facts: Mapping[str, object], *, prompt: str) -> str:
         return "The subject held a 73.2 percent controlling stake (fabricated)."
 
 
@@ -70,6 +70,7 @@ def _service_with(narration: object) -> ScreeningService:
         container.adverse_media,
         narration,  # type: ignore[arg-type]
         tracer=container.tracer,
+        guardrail=container.guardrail,
         engine=MatchEngine(policy),
         list_entries=load_list_entries(),
         guidance=load_guidance(),
@@ -96,7 +97,7 @@ class _SilentGeneration:
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
 
-    def draft_memo(self, facts: Mapping[str, object]) -> str:
+    def draft_memo(self, facts: Mapping[str, object], *, prompt: str) -> str:
         return ""
 
 

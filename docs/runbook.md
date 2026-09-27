@@ -153,6 +153,28 @@ carries `review_routing: "failed"` and an empty reference, the failure is logged
 console says the item is not queued for review. Terraform states the switch as
 `review_routing_enabled`.
 
+## Guardrail (rule R1)
+The memo draft is the one generation call, and the guardrail screens it both ways: the subject
+and then the whole prompt the drafter sends are screened INPUT before the drafter is called, and
+the returned draft is screened OUTPUT before the groundedness check may accept it. Under `gcp`
+the screen is Model Armor, on the regional host `model_armor.host` (never the global endpoint),
+against the template `model_armor.template_id` that `infra/terraform/model_armor.tf` creates
+(`sanctions-screening-guardrail` by default, overridable with `SANCTIONS_MODEL_ARMOR_TEMPLATE`).
+Each sanitize call has a deadline (`model_armor.timeout_seconds`).
+
+It fails CLOSED. Only a complete, clean screen allows: a filter match, a screen where some
+filters were skipped or failed, an empty result, an API error or a timeout all refuse. A refusal
+drops the model draft, is written to the audit trail as `BLOCKED` (the direction and the reason,
+never the refused text), and the deterministic memo stands, so the screening itself completes.
+The runtime service account holds `roles/modelarmor.user` for the sanitize calls.
+
+`SANCTIONS_GUARDRAIL` switches it, read in three states like review routing. Off binds a
+guardrail that allows everything and logs one warning at startup. On under the managed profile
+with no template named REFUSES TO BOOT. Terraform states the switch as `guardrail_enabled`.
+asia-southeast1 refuses the malicious-URI filter, so a deployment there sets
+`model_armor_full_capabilities = false` and discloses the narrowed guardrail (prompt injection,
+jailbreak and the RAI filters still run).
+
 ## Supply chain
 Installs come from the committed lockfiles. After changing a dependency run `make lock` and commit
 both files, then `make audit` (`pip-audit` over both locks). CI runs the same audit as a hard

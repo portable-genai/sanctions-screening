@@ -25,6 +25,7 @@ from sanctions_screening import config
 from sanctions_screening.adapters.local.adverse_media import LocalAdverseMediaAdapter
 from sanctions_screening.adapters.local.narration import LocalNarrationAdapter
 from sanctions_screening.config import OFFLINE_STUB_MODEL, Settings
+from sanctions_screening.domain.memo import memo_prompt
 
 from tests import REPO_ROOT
 
@@ -58,11 +59,11 @@ def test_the_local_drafter_notes_itself_only_inside_a_request() -> None:
     adapter = LocalNarrationAdapter(Settings.load())
     facts = {"subject": "Example (FICTIONAL)", "band": "clear", "recommendation": "no_match"}
     with provenance.scope() as record:
-        adapter.draft_memo(facts)
+        adapter.draft_memo(facts, prompt=memo_prompt(facts))
     assert record.models == [OFFLINE_STUB_MODEL]
     assert record.search_used is False
     # Outside a request (the CLI, an eval run) noting is a no-op, never an error.
-    adapter.draft_memo(facts)
+    adapter.draft_memo(facts, prompt=memo_prompt(facts))
 
 
 def test_a_search_using_call_is_reported_and_does_not_leak_into_the_next_request(

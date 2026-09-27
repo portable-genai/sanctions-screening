@@ -16,6 +16,7 @@ from hex_service_kit.identity import IdentityPort
 
 from .adverse_media import AdverseMediaPort
 from .audit import AuditSinkPort
+from .guardrail import GuardrailPort
 from .identity import (
     CLIENT_ASSERTED,
     END_USER_AUTH_ATTR,
@@ -37,6 +38,7 @@ from .review_router import ReviewRouterPort
 #: port name (the key in the settings ``adapters:`` block) -> the Protocol it must satisfy.
 PORT_PROTOCOLS: dict[str, type] = {
     "audit": AuditSinkPort,
+    "guardrail": GuardrailPort,
     "identity": IdentityPort,
     "review_router": ReviewRouterPort,
     "ownership_graph": OwnershipGraphPort,
@@ -59,6 +61,7 @@ __all__ = [
     "AdverseMediaPort",
     "AuditSinkPort",
     "EndUserAuthUnavailableError",
+    "GuardrailPort",
     "IdentityPort",
     "NarrationPort",
     "OwnershipGraphPort",

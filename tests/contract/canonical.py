@@ -28,8 +28,10 @@ from sanctions_screening.domain.kernel import (
     AuditEvent,
     Citation,
     Decision,
+    Direction,
     Severity,
 )
+from sanctions_screening.domain.memo import memo_prompt
 from sanctions_screening.domain.models import (
     DispositionMemo,
     MatchBand,
@@ -122,8 +124,23 @@ def _adverse_answered(_adapter: Any, result: Any) -> bool:
     return isinstance(result, tuple) and len(result) >= 1
 
 
+#: Benign canonical text: it must not match the local heuristic's injection/jailbreak patterns,
+#: so the offline family's "answers" claim is proved on the same request every family gets.
+_CANONICAL_SCREEN_TEXT = "routine sanctions disposition memo, nothing adversarial here"
+
+
+def _guardrail_invoke(adapter: Any) -> Any:
+    return adapter.screen(_CANONICAL_SCREEN_TEXT, Direction.INPUT)
+
+
+def _guardrail_answered(_adapter: Any, result: Any) -> bool:
+    allowed = bool(getattr(result, "allowed", False))
+    return allowed and result.sanitized_text == _CANONICAL_SCREEN_TEXT
+
+
 def _narration_invoke(adapter: Any) -> Any:
-    return adapter.draft_memo({"subject": "x", "matches": [], "owners_screened": 0})
+    facts = {"subject": "x", "matches": [], "owners_screened": 0}
+    return adapter.draft_memo(facts, prompt=memo_prompt(facts))
 
 
 def _narration_answered(_adapter: Any, result: Any) -> bool:
@@ -182,6 +199,13 @@ CANONICAL_CALLS: dict[str, PortCase] = {
         # The lazy managed grounded-search import is the first thing the adapter does.
         managed_refusal=(ImportError,),
         detail="return severity-ordered adverse-media findings",
+    ),
+    "guardrail": PortCase(
+        invoke=_guardrail_invoke,
+        answered=_guardrail_answered,
+        # The lazy `google.cloud.modelarmor` import is the first thing the managed adapter does.
+        managed_refusal=(ImportError,),
+        detail="screen one canonical prompt and allow it unchanged",
     ),
     "narration": PortCase(
         invoke=_narration_invoke,

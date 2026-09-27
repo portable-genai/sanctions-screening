@@ -145,8 +145,8 @@ detail is in the "Browser boundary" row of [`../../COMPLIANCE.md`](../../COMPLIA
 
 ## What is explicitly out of scope for this repo?
 
-Prompt-injection screening and output filtering (`agent-guardrail-gateway`, the guardrail gateway: not wired today,
-and honestly so, because no model call currently executes on any profile), governed ACL-aware
+The guardrail service itself (`agent-guardrail-gateway`, the guardrail gateway: this repo screens the memo draft
+through its port, Model Armor under `gcp`, and owns none of the screening models), governed ACL-aware
 retrieval (`enterprise-knowledge-base`), the agent registry that owns agent identity and entitlements (`agent-registry`), the
 promotion and model-risk gate (`model-quality-gate`), the enterprise WORM audit and tracing sink (`agent-observability`),
 the human-review and maker-checker console (`human-review-console`), and beneficial-ownership RESOLUTION

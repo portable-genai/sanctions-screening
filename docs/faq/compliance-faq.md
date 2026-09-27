@@ -86,8 +86,9 @@ deterministic memo and the managed adapter is a construction-only seam. `managed
 names it, and the API preflight REFUSES to start a managed process while it is on the primary
 journey, so "production ready" cannot become a label. [`../model-card.md`](../model-card.md)
 records the boundary and the controls still owed (model id and version pinning, budget and rate
-controls with a kill switch, a managed-profile eval run through the `model-quality-gate`, and
-prompt-injection screening through `agent-guardrail-gateway`).
+controls with a kill switch, and a managed-profile eval run through the `model-quality-gate`).
+Prompt-injection screening is bound at the model boundary (rule R1): the guardrail port screens
+the memo draft's prompt and output, Model Armor under `gcp`.
 
 The offline eval gate (`eval/run_eval.py --mode smoke`) runs on every merge and scores six
 metrics against a hand-written oracle, never against the pipeline's own verdict:
