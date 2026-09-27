@@ -28,6 +28,10 @@ Locked decisions, pinned stack, contracts. This document is the deepest authorit
   escalation from one that stopped here. Under the managed profile, routing on with no console
   configured refuses at boot; a hand-off that fails at request time is reported as `failed` and
   logged rather than failing the result. `SANCTIONS_REVIEW_ROUTING` switches routing (default on).
+- **Guardrail** (rule R1): the memo draft is screened INPUT (the subject, then the whole prompt)
+  before the drafter is called and OUTPUT before the groundedness check may accept it. A refusal
+  is audited `BLOCKED` and the deterministic memo stands; the disposition is never blocked.
+  `SANCTIONS_GUARDRAIL` switches it (default on).
 - **Profile**: resolved ONCE, at import, into a `ProfileChoice` and never a bare string. Three
   states of `SANCTIONS_PROFILE`: UNSET is NO CHOICE (the SDK-free adapters
   still bind, but the seeded personas are refused, no service-to-service scheme is selected, every

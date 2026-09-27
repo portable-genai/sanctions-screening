@@ -62,6 +62,7 @@ def _screen(request: ScreeningRequest) -> tuple[_RecordingTracer, ScreeningResul
         container.adverse_media,
         container.narration,
         tracer=tracer,  # type: ignore[arg-type]
+        guardrail=container.guardrail,
         engine=MatchEngine(policy),
         list_entries=load_list_entries(),
         guidance=load_guidance(),

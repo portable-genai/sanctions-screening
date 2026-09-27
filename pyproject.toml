@@ -52,6 +52,9 @@ gcp = [
   # profile. Found by the lint-gcp job, the first check able to see these imports.
   "google-cloud-discoveryengine>=0.0",
   "google-genai>=2.0",
+  # adapters/gcp/guardrail.py: Model Armor screens the memo draft both ways (rule R1). Declared
+  # here so the runtime image carries it and lint-gcp type-checks the adapter against it.
+  "google-cloud-modelarmor>=0.7",
 ]
 
 [project.scripts]

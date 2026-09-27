@@ -109,14 +109,16 @@ def test_no_planted_identifier_reaches_the_model_the_worm_record_or_the_console(
     one masked field is how this class of defect stays invisible.
     """
     seen: list[dict[str, object]] = []
+    prompts: list[str] = []
     container = build_container(local_settings())
     service = build_screening_service(container)
     inner = service._narration  # noqa: SLF001 - tapping the port is the point of the test
 
     class _Tap:
-        def draft_memo(self, facts: dict[str, object]) -> str:
+        def draft_memo(self, facts: dict[str, object], *, prompt: str) -> str:
             seen.append(facts)
-            return inner.draft_memo(facts)
+            prompts.append(prompt)
+            return inner.draft_memo(facts, prompt=prompt)
 
     service._narration = _Tap()  # type: ignore[assignment]  # noqa: SLF001
     result = service.screen(sample_cases.PII_SUBJECT_CASE, actor=sample_cases.ACTOR)
@@ -124,7 +126,7 @@ def test_no_planted_identifier_reaches_the_model_the_worm_record_or_the_console(
 
     # 1. The model. The WHOLE facts object, not the fields somebody remembered to mask.
     assert seen, "the narrator must have been called"
-    read_by_model = json.dumps(seen[-1], default=str)
+    read_by_model = json.dumps(seen[-1], default=str) + prompts[-1]
     for token in planted:
         assert token not in read_by_model, f"{token} reached the model in {read_by_model!r}"
 

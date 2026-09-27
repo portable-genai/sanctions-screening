@@ -28,6 +28,7 @@ def build_screening_service(
         resolved.adverse_media,
         resolved.narration,
         tracer=resolved.tracer,
+        guardrail=resolved.guardrail,
         engine=engine,
         list_entries=load_list_entries(),
         guidance=load_guidance(),

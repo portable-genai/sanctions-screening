@@ -20,8 +20,14 @@ from typing import Protocol, runtime_checkable
 
 @runtime_checkable
 class NarrationPort(Protocol):
-    def draft_memo(self, facts: Mapping[str, object]) -> str:
+    def draft_memo(self, facts: Mapping[str, object], *, prompt: str) -> str:
         """Draft the disposition memo prose from the engine facts, or raise when it cannot.
+
+        ``prompt`` is the text a model-backed drafter sends, EXACTLY as given: the domain
+        renders it from ``facts`` (``domain.memo.memo_prompt``), screens it INPUT through the
+        guardrail (rule R1), and passes it here only once the screen allowed it. A drafter that
+        built its own prompt from the facts instead would send text no screen has seen whole.
+        The returned draft is screened OUTPUT before the groundedness check may accept it.
 
         The return is untrusted text: the caller validates it against the engine's own figures
         and discards it on any figure the engine did not compute. An adapter that cannot produce

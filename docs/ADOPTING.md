@@ -220,9 +220,11 @@ is authoritative in [`COMPLIANCE.md`](../COMPLIANCE.md).
 - `agent-registry` (the agent registry) owns agent identity, versioning and entitlements. This repo
   publishes an A2A card at `/.well-known/agent-card.json` built from the same tool table the
   runtime binds; registering it with `agent-registry` and taking entitlements from it is still owed (rule R4).
-- `agent-guardrail-gateway` (the guardrail gateway) owns prompt-injection defence and output filtering. Not wired
-  today, and honestly so: no model call currently executes on any profile. Bind a guardrail port
-  before the narration adapter starts sending an analyst's free text to a model (rule R1).
+- `agent-guardrail-gateway` (the guardrail gateway) owns prompt-injection defence and output filtering. Wired at
+  the model boundary: `ports/guardrail.py` screens the memo draft's prompt and output (Model
+  Armor under `gcp`), failing closed to the deterministic memo, before the managed drafter is
+  implemented rather than after (rule R1). `SANCTIONS_GUARDRAIL=off` is the stated way to run
+  without it.
 - `enterprise-knowledge-base` (the governed knowledge base) owns ACL-aware grounded retrieval. Not used: this
   service grounds a memo in the engine's own facts and its list-pack citations, not in retrieval.
   A fork that adds a retrieval step takes on rule R3 and P-05 with it.

@@ -7,6 +7,8 @@ number lives here where both the narrator's fallback and the validator can share
   adapter returns this, and the service uses it as the FALLBACK when a model draft is discarded,
   so a discarded draft never degrades below a real, cited memo.
 * :func:`allowed_numbers` is the exact set of numeric tokens the engine computed.
+* :func:`memo_prompt` renders the facts as the one prompt a model-backed drafter sends, so the
+  guardrail screens exactly the text a model reads (rule R1).
 * :func:`is_grounded` rejects any draft that contains a number outside that set: a model may
   restate the engine's figures and add nothing consequential, and a draft that invents "held 88%"
   is discarded rather than shown.
@@ -71,6 +73,48 @@ def is_grounded(text: str, facts: Mapping[str, Any]) -> bool:
     """True when every number in ``text`` is one the engine actually computed."""
     allowed = allowed_numbers(facts)
     return all(token in allowed for token in _NUMBER.findall(text))
+
+
+def memo_prompt(facts: Mapping[str, Any]) -> str:
+    """The prompt a model-backed drafter sends: every fact, rendered as sent (rule R1).
+
+    This is the string the guardrail's INPUT screen reads whole, so it carries everything a model
+    would see: the subject and every party name (both caller-supplied, the subject typed and the
+    names parsed out of the payment message), the owners, the adverse-media headlines, the
+    guidance and the closed set of numbers the draft may use. A drafter that built its own prompt
+    from the facts instead would send text no screen has seen whole. The order is stable, so the
+    same facts always render the same prompt. The instruction line carries no digit of its own,
+    so the prompt adds nothing to what :func:`allowed_numbers` permits.
+    """
+    lines: list[str] = [
+        "Restate this already-decided sanctions screening disposition for a reviewer. Add no "
+        "number that is not listed as allowed below, and do not change the band or the "
+        "recommendation.",
+        f"Subject: {facts.get('subject', '')}",
+        f"Band: {facts.get('band', '')}",
+        f"Recommendation: {facts.get('recommendation', '')}",
+    ]
+    for match in _matches(facts):
+        lines.append(
+            f"Match: {match.get('name', '')} | {match.get('list_id', '')} "
+            f"{match.get('entry', '')} | confidence {fmt_pct(float(match.get('confidence', 0.0)))}"
+        )
+    lines.append(f"Owners screened: {int(facts.get('owners_screened', 0))}")
+    for owner in _owner_matches(facts):
+        lines.append(
+            f"Owner match: {owner.get('name', '')} | {owner.get('band', '')} | confidence "
+            f"{fmt_pct(float(owner.get('confidence', 0.0)))}"
+        )
+    media = facts.get("adverse_media") or ()
+    if isinstance(media, Sequence):
+        for item in media:
+            if isinstance(item, Mapping):
+                lines.append(f"Adverse media (advisory): {item.get('headline', '')}")
+    guidance = str(facts.get("guidance", "")).strip()
+    if guidance:
+        lines.append(f"Guidance: {guidance}")
+    lines.append("Allowed numbers: " + ", ".join(sorted(allowed_numbers(facts))))
+    return "\n".join(lines)
 
 
 def build_memo(facts: Mapping[str, Any]) -> str:

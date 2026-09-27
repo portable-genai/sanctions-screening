@@ -20,7 +20,7 @@ imports, and its own control case
 
 ## What are the three profiles?
 
-`SANCTIONS_PROFILE` selects the whole adapter stack for all eight ports at once:
+`SANCTIONS_PROFILE` selects the whole adapter stack for all nine ports at once:
 
 - **`local`** (the dev, test and CI default) is a real, working, SDK-free offline stack, not a
   pile of stubs. The audit sink is a hash-chained SQLite WORM log from the commons, identity is

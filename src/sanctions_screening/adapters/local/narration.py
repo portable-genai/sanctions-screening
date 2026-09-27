@@ -4,6 +4,9 @@ Not a stub. It returns a real, grounded disposition memo built from the engine f
 ``domain.memo.build_memo``, so the offline gate exercises the memo path and the service's
 groundedness validation passes by construction. The service uses the same builder as its fallback
 when a MODEL draft is discarded, so offline and the discard path produce identical, cited prose.
+It builds from the facts and does not read ``prompt``; the service still screens both directions
+around it (rule R1), so the offline gate exercises the same guardrail path a model-backed drafter
+runs through.
 """
 
 from __future__ import annotations
@@ -22,7 +25,7 @@ class LocalNarrationAdapter:
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
 
-    def draft_memo(self, facts: Mapping[str, object]) -> str:
+    def draft_memo(self, facts: Mapping[str, object], *, prompt: str) -> str:
         memo = build_memo(facts)
         # What answered this draft, for the console's model pill: the same name `generator_model`
         # reports under this binding, so the configured pill and the answered pill agree.

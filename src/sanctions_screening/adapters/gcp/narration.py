@@ -2,7 +2,9 @@
 
 The model restates the engine's bands and arithmetic; it produces no consequential number. The
 caller validates the draft against the engine's figures and DISCARDS it on any invented number,
-so this adapter is never trusted to be grounded on its own. The SDK import is lazy, so this module
+so this adapter is never trusted to be grounded on its own. It sends ``prompt`` exactly as given
+and never builds its own: that is the text the guardrail's INPUT screen allowed (rule R1), and
+the draft it returns is screened OUTPUT before it is used. The SDK import is lazy, so this module
 imports on the offline profiles with no cloud SDK present, and that lazy import is the honest
 refusal offline.
 """
@@ -23,10 +25,10 @@ class GeminiNarrationAdapter:
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
 
-    def draft_memo(self, facts: Mapping[str, object]) -> str:
+    def draft_memo(self, facts: Mapping[str, object], *, prompt: str) -> str:
         from google import genai  # noqa: PLC0415 - lazy so offline imports need no SDK
 
-        _ = (genai, _MODEL, facts)
+        _ = (genai, _MODEL, facts, prompt)
         raise NotImplementedError(
             "the managed narration model is a deployment concern; configure the Gemini client "
             "and region for the gcp profile. The draft is validated and discarded on any "

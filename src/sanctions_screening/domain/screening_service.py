@@ -9,6 +9,18 @@ write the audit record.
 
 Every disposition is consequential: ``requires_human_review`` is ALWAYS True and the caller routes
 the result to human-review-console (rule R8). The system never clears a match on its own.
+
+Rule R1: the guardrail screens BOTH directions of the one generation call this service makes, the
+memo draft (``_draft_memo``, wrapping ``ports/narration.py``). INPUT, before the drafter is
+called at all: the caller-supplied subject on its own, then the whole prompt the drafter sends
+(``domain.memo.memo_prompt``), which carries every other caller-supplied field that reaches a
+model (the party names parsed from the payment message) as well as the owners, the adverse media
+and the guidance. OUTPUT: the returned draft, before the groundedness check may accept it. The
+text each screen hands back is the text used from then on. The memo draft is optional and never
+consequential (the band and the recommendation are the engine's), so a refusal here, a block or a
+guardrail that could not decide, drops the draft like any other drafting failure: it is audited
+``Decision.BLOCKED`` and the deterministic memo, which no model wrote, stands. The disposition is
+never blocked and never carries a partial draft.
 """
 
 from __future__ import annotations
@@ -19,13 +31,14 @@ from pii_kit import redact
 
 from ..ports.adverse_media import AdverseMediaPort
 from ..ports.audit import AuditSinkPort
+from ..ports.guardrail import GuardrailPort
 from ..ports.narration import NarrationPort
 from ..ports.observability import ObservabilityTracerPort
 from ..ports.ownership_graph import OwnershipGraphPort
-from .kernel import AuditEvent, Citation, Decision, Severity, utcnow
+from .kernel import AuditEvent, Citation, Decision, Direction, GuardrailVerdict, Severity, utcnow
 from .listpacks import GuidanceNote
 from .match_engine import MatchEngine, recommendation_for
-from .memo import build_memo, is_grounded
+from .memo import build_memo, is_grounded, memo_prompt
 from .message_fields import extract_parties
 from .models import (
     AdverseMediaFinding,
@@ -110,6 +123,7 @@ class ScreeningService:
         narration: NarrationPort,
         *,
         tracer: ObservabilityTracerPort,
+        guardrail: GuardrailPort,
         engine: MatchEngine,
         list_entries: tuple[ListEntry, ...],
         guidance: tuple[GuidanceNote, ...],
@@ -120,6 +134,7 @@ class ScreeningService:
         self._adverse_media = adverse_media
         self._narration = narration
         self._tracer = tracer
+        self._guardrail = guardrail
         self._engine = engine
         self._list_entries = list_entries
         self._guidance = guidance
@@ -165,7 +180,14 @@ class ScreeningService:
             severity = _BAND_SEVERITY[overall_band]
 
             memo = self._draft_memo(
-                request.subject, overall_band, recommendation, screenings, owners_screened, media
+                request.subject,
+                overall_band,
+                recommendation,
+                screenings,
+                owners_screened,
+                media,
+                actor=actor,
+                severity=severity,
             )
 
             base = (
@@ -278,22 +300,107 @@ class ScreeningService:
         screenings: list[PartyScreening],
         owners_screened: int,
         media: tuple[AdverseMediaFinding, ...],
+        *,
+        actor: str,
+        severity: Severity,
     ) -> DispositionMemo:
+        """Draft the memo, screened both directions before a draft may stand (rule R1).
+
+        INPUT, before the drafter is called: the subject on its own (the caller typed it), then
+        the PROMPT the drafter sends, rendered from the facts with the screened subject in it.
+        The joined screen is not redundant: it is the text a model actually reads, the party
+        names parsed from the caller's payment message included, so it is what has to pass. The
+        drafter receives that screened prompt exactly as the screen returned it.
+
+        OUTPUT: a returned draft is screened before ``is_grounded`` may accept it, and the
+        screened text is what goes forward. The groundedness check only vets numbers and says
+        nothing about an unsafe narrative, so the screen comes first.
+
+        A refusal (a block, or a guardrail that raised instead of deciding) is audited BLOCKED
+        and the deterministic memo stands; the disposition is never blocked and no partial draft
+        is kept.
+        """
         facts = self._memo_facts(subject, band, recommendation, screenings, owners_screened, media)
         # Masked HERE, where the facts cross out to the model, so the drafted memo, the returned
         # result and anything a surface renders from them are covered at one boundary rather than
         # three. P-04 is about what the model READS as much as about what the record keeps.
         facts = _redacted(facts)
         citations = self._memo_citations(screenings, media)
+        # Discard the draft (a refused screen, a model that invented a number, or a refusing
+        # adapter) and fall back to the deterministic memo, which is grounded by construction.
+        fallback = DispositionMemo(text=build_memo(facts), grounded=False, citations=citations)
+
+        screened_subject = self._screen(
+            str(facts.get("subject", "")), Direction.INPUT, actor=actor, severity=severity
+        )
+        if screened_subject is None:
+            return fallback
+        facts = {**facts, "subject": screened_subject}
+        prompt = self._screen(memo_prompt(facts), Direction.INPUT, actor=actor, severity=severity)
+        if prompt is None:
+            return fallback
+
         try:
-            draft = self._narration.draft_memo(facts)
+            draft = self._narration.draft_memo(facts, prompt=prompt)
         except Exception:
-            draft = ""
-        if draft.strip() and is_grounded(draft, facts):
-            return DispositionMemo(text=draft, grounded=True, citations=citations)
-        # Discard the draft (a model that invented a number, or a refusing adapter) and fall back
-        # to the deterministic memo, which is grounded by construction.
-        return DispositionMemo(text=build_memo(facts), grounded=False, citations=citations)
+            return fallback
+        if not draft.strip():
+            return fallback
+
+        screened_draft = self._screen(draft, Direction.OUTPUT, actor=actor, severity=severity)
+        if screened_draft is None:
+            return fallback
+        if screened_draft.strip() and is_grounded(screened_draft, facts):
+            return DispositionMemo(text=screened_draft, grounded=True, citations=citations)
+        return fallback
+
+    def _screen(
+        self, text: str, direction: Direction, *, actor: str, severity: Severity
+    ) -> str | None:
+        """Screen one text in one direction: the text to use from here on, or ``None``.
+
+        The returned text is the verdict's ``sanitized_text`` exactly as given, including an
+        empty string. ``None`` means refused: a block, or a guardrail that raised instead of
+        deciding (fail closed). Either way the refusal is audited BLOCKED first. An audit write
+        that itself fails propagates: the WORM trail is mandatory, the memo draft is not.
+        """
+        try:
+            verdict: GuardrailVerdict = self._guardrail.screen(text, direction)
+        except Exception as exc:  # noqa: BLE001 - an undecided screen is a refusal, not a pass
+            self._audit_guardrail_block(
+                actor, direction, f"guardrail unavailable ({type(exc).__name__})", severity
+            )
+            return None
+        if not verdict.allowed or verdict.sanitized_text is None:
+            self._audit_guardrail_block(
+                actor, direction, verdict.reason or "blocked by guardrail", severity
+            )
+            return None
+        return verdict.sanitized_text
+
+    def _audit_guardrail_block(
+        self, actor: str, direction: Direction, reason: str, severity: Severity
+    ) -> None:
+        """Audit a guardrail refusal on the memo draft (rule R1/R2).
+
+        Never carries the refused text, and never the subject, which may be the very thing
+        refused: only that a refusal happened, in which direction, and why. A refused attempt is
+        a security-relevant event the WORM trail must hold even though the screening as a whole
+        proceeds on its deterministic memo.
+        """
+        self._audit.record(
+            AuditEvent(
+                action="screen",
+                actor=actor,
+                decision=Decision.BLOCKED,
+                severity=severity,
+                redacted_summary=redact(
+                    f"memo draft blocked ({direction.value}): {reason}", PII_PATTERNS
+                ),
+                citations=(),
+                timestamp=utcnow(),
+            )
+        )
 
     # ------------------------------------------------------------------ helpers
 

@@ -18,7 +18,7 @@ class OnPremNarrationAdapter:
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
 
-    def draft_memo(self, facts: Mapping[str, object]) -> str:
+    def draft_memo(self, facts: Mapping[str, object], *, prompt: str) -> str:
         raise NotImplementedError(
             "on-prem narration is a portability placeholder: bind the client's own model "
             "(see docs/onprem-migration.md)."
